@@ -3,7 +3,7 @@
   "displayName": "EditorConfig for VS Code",
   "description": "EditorConfig Support for Visual Studio Code",
   "publisher": "EditorConfig",
-  "version": "0.16.4",
+  "version": "0.16.5",
   "icon": "EditorConfig_icon.png",
   "engines": {
     "vscode": "^1.51.1"
@@ -31,7 +31,7 @@
     "theme": "dark"
   },
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/editorConfigMain.js",
   "types": "./out/editorConfigMain.d.ts",
@@ -128,7 +128,7 @@
     "clean": "rimraf out",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "postbuild": "cp -r src/test/suite/fixtures out/test/suite && cp src/DefaultTemplate.editorconfig out",
+    "postbuild": "cp -r src/test/suite/fixtures out/test/suite && cp -r src/test/untitled-suite/fixtures out/test/untitled-suite && cp src/DefaultTemplate.editorconfig out",
     "lint": "eslint src/**/*.ts",
     "pretest": "npm run lint && npm run build",
     "prewatch": "npm run build",

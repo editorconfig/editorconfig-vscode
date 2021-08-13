@@ -4,6 +4,7 @@ import {
 	Selection,
 	TextDocument,
 	TextDocumentSaveReason,
+	TextEditor,
 	TextEditorOptions,
 	window,
 	workspace,
@@ -38,20 +39,11 @@ export default class DocumentWatcher {
 
 		const subscriptions: Disposable[] = []
 
+		this.handleTextEditorChange(window.activeTextEditor)
+
 		subscriptions.push(
 			window.onDidChangeActiveTextEditor(async editor => {
-				if (editor && editor.document) {
-					const newOptions = await resolveTextEditorOptions(
-						(this.doc = editor.document),
-						{
-							onEmptyConfig: this.onEmptyConfig,
-						},
-					)
-					applyTextEditorOptions(newOptions, {
-						onNoActiveTextEditor: this.onNoActiveTextEditor,
-						onSuccess: this.onSuccess,
-					})
-				}
+				this.handleTextEditorChange(editor)
 			}),
 		)
 
@@ -100,6 +92,7 @@ export default class DocumentWatcher {
 		)
 
 		this.disposable = Disposable.from.apply(this, subscriptions)
+		this.log('Document watcher initialized')
 	}
 
 	public onEmptyConfig = (relativePath: string) => {
@@ -162,5 +155,20 @@ export default class DocumentWatcher {
 				return edits
 			}),
 		]
+	}
+
+	private async handleTextEditorChange(editor?: TextEditor) {
+		if (editor && editor.document) {
+			const newOptions = await resolveTextEditorOptions(
+				(this.doc = editor.document),
+				{
+					onEmptyConfig: this.onEmptyConfig,
+				},
+			)
+			applyTextEditorOptions(newOptions, {
+				onNoActiveTextEditor: this.onNoActiveTextEditor,
+				onSuccess: this.onSuccess,
+			})
+		}
 	}
 }
