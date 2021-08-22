@@ -1,3 +1,9 @@
+## 0.16.6
+
+- **Fix:** apply config to untitled files
+- **Fix:** disable the `virtualWorkspaces` feature because the `editorconfig`
+  dependency relies on a normal filesystem
+
 ## 0.16.5
 
 - **Fix:** apply config on window reload
