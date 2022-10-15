@@ -61,13 +61,13 @@
       "commandPalette": [
         {
           "command": "EditorConfig.generate",
-          "when": "explorerResourceIsFolder"
+          "when": "explorerResourceIsFolder && workspaceFolderCount > 0"
         }
       ],
       "explorer/context": [
         {
           "command": "EditorConfig.generate",
-          "when": "explorerResourceIsFolder",
+          "when": "explorerResourceIsFolder && workspaceFolderCount > 0",
           "group": "EditorConfig@1"
         }
       ]
