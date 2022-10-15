@@ -39,7 +39,7 @@
     "commands": [
       {
         "command": "EditorConfig.generate",
-        "title": "Generate .editorconfig"
+        "title": "%ext.command.title.generate%"
       }
     ],
     "configuration": {
@@ -48,12 +48,12 @@
         "editorconfig.generateAuto": {
           "type": "boolean",
           "default": true,
-          "description": "Automatically generates an .editorconfig file according to your current editor settings."
+          "description": "%ext.config.generateAuto.description%"
         },
         "editorconfig.template": {
           "type": "string",
           "default": "default",
-          "description": "If generateAuto is false, this template path will be used for each newly-generated .editorconfig file."
+          "description": "%ext.config.generateAuto.template%"
         }
       }
     },

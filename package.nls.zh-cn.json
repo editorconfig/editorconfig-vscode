@@ -1,0 +1,5 @@
+{
+  "ext.command.title.generate": "生成 .editorconfig",
+  "ext.config.generateAuto.description": "根据当前编辑器设置自动生成.editorconfig文件。",
+  "ext.config.generateAuto.template": "如果generateAuto为false，则此模板路径将用于每个新生成的.editorconfig文件。"
+}
