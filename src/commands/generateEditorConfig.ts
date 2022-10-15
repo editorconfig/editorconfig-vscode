@@ -1,4 +1,5 @@
 import { readFile as _readFile } from 'fs'
+import messages from '../Message'
 import { EOL } from 'os'
 import { resolve } from 'path'
 import { promisify } from 'util'
@@ -15,7 +16,7 @@ export async function generateEditorConfig(uri: Uri) {
 		workspace.workspaceFolders && workspace.workspaceFolders[0].uri
 	const currentUri = uri || workspaceUri
 	if (!currentUri) {
-		window.showErrorMessage("Workspace doesn't contain any folders.")
+		window.showErrorMessage(messages.EMPTY_WORKSPACE)
 		return
 	}
 
@@ -24,9 +25,7 @@ export async function generateEditorConfig(uri: Uri) {
 	try {
 		const stats = await workspace.fs.stat(editorConfigUri)
 		if (stats.type === FileType.File) {
-			window.showErrorMessage(
-				'An .editorconfig file already exists in this workspace.',
-			)
+			window.showErrorMessage(messages.CONFIG_ALREADY_EXIST)
 			return
 		}
 	} catch (err) {
@@ -60,7 +59,7 @@ export async function generateEditorConfig(uri: Uri) {
 			} catch (error) {
 				window.showErrorMessage(
 					[
-						`Could not read EditorConfig template file at ${template}`,
+						`${messages.CAN_NOT_READ_TEMPLATE_FILE} ${template}`,
 						error.message,
 					].join(EOL),
 				)

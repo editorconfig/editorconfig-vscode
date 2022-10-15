@@ -1,0 +1,5 @@
+{
+  "ext.command.title.generate": "Generate .editorconfig",
+  "ext.config.generateAuto.description": "Automatically generates an .editorconfig file according to your current editor settings.",
+  "ext.config.generateAuto.template": "If generateAuto is false, this template path will be used for each newly-generated .editorconfig file."
+}
