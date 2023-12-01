@@ -1,12 +1,5 @@
 import * as editorconfig from 'editorconfig'
-import {
-	TextDocument,
-	TextEditorOptions,
-	Uri,
-	window,
-	workspace,
-	commands,
-} from 'vscode'
+import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -58,7 +51,14 @@ export async function applyTextEditorOptions(
 		return
 	}
 
-	commands.executeCommand('editor.action.detectIndentation') // <--- HACK!!
+	const workspaceConfig = workspace.getConfiguration('editor', editor?.document)
+	if (
+		workspaceConfig.get<number | string>('indentSize') === 'tabSize' &&
+		typeof newOptions.indentSize === 'undefined' &&
+		typeof newOptions.tabSize === 'number'
+	) {
+		newOptions.indentSize = editor.options.indentSize
+	}
 	editor.options = newOptions
 
 	if (onSuccess) {
