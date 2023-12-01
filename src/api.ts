@@ -1,5 +1,12 @@
 import * as editorconfig from 'editorconfig'
-import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
+import {
+	TextDocument,
+	TextEditorOptions,
+	Uri,
+	window,
+	workspace,
+	commands,
+} from 'vscode'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -51,6 +58,7 @@ export async function applyTextEditorOptions(
 		return
 	}
 
+	commands.executeCommand('editor.action.detectIndentation') // <--- HACK!!
 	editor.options = newOptions
 
 	if (onSuccess) {
@@ -72,6 +80,11 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 	 * this property value will be `undefined`.
 	 */
 	insertSpaces?: boolean
+	/**
+	 * The number of spaces used for indentation or `undefined` if
+	 * `editor.detectIndentation` is on.
+	 */
+	indentSize?: number | string
 } {
 	const workspaceConfig = workspace.getConfiguration('editor', doc)
 	const detectIndentation = workspaceConfig.get<boolean>('detectIndentation')
@@ -80,6 +93,7 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 		? {}
 		: {
 				tabSize: workspaceConfig.get<number>('tabSize'),
+				indentSize: workspaceConfig.get<number | string>('indentSize'),
 				insertSpaces: workspaceConfig.get<boolean>('insertSpaces'),
 			}
 }
@@ -146,26 +160,34 @@ export function fromEditorConfig(
 ): TextEditorOptions {
 	const resolved: TextEditorOptions = {
 		tabSize:
-			config.indent_style === 'tab'
+			(config.indent_style === 'tab'
 				? (config.tab_width ?? config.indent_size)
-				: (config.indent_size ?? config.tab_width),
+				: config.tab_width) ?? defaults.tabSize,
+		indentSize:
+			(config.indent_style === 'tab'
+				? (config.indent_size ?? 'tabSize')
+				: config.indent_size) ?? defaults.indentSize,
 	}
 	if (resolved.tabSize === 'tab') {
 		resolved.tabSize = config.tab_width
 	}
-	return {
-		...(config.indent_style === 'tab' ||
+	if (resolved.indentSize === 'tab') {
+		resolved.indentSize = 'tabSize'
+	}
+	if (
+		config.indent_style === 'tab' ||
 		config.indent_size === 'tab' ||
 		config.indent_style === 'space'
-			? {
-					insertSpaces: config.indent_style === 'space',
-				}
-			: {}),
-		tabSize:
-			resolved.tabSize && Number(resolved.tabSize) >= 0
-				? resolved.tabSize
-				: defaults.tabSize,
+	) {
+		resolved.insertSpaces = config.indent_style === 'space'
 	}
+	if (resolved.tabSize === undefined || resolved.tabSize === 'unset') {
+		delete resolved.tabSize
+	}
+	if (resolved.indentSize === undefined || resolved.indentSize === 'unset') {
+		delete resolved.indentSize
+	}
+	return resolved
 }
 
 /**

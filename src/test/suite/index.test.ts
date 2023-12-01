@@ -215,11 +215,17 @@ suite('EditorConfig extension', function () {
 			'tab_width',
 			'indent-style-space',
 		])
-		const expectedTabSize = 2
+		const expectedTabSize = 8
+		const expectedIndentSize = 2
 		assert.strictEqual(
 			options.tabSize,
 			expectedTabSize,
 			`editor has a tabSize of ${options.tabSize} instead of ${expectedTabSize}`,
+		)
+		assert.strictEqual(
+			options.indentSize,
+			expectedIndentSize,
+			`editor has an indentSize of ${options.indentSize} instead of ${expectedIndentSize}`,
 		)
 		assert.strictEqual(
 			options.insertSpaces,
@@ -234,11 +240,17 @@ suite('EditorConfig extension', function () {
 			'tab_width',
 			'indent-style-tab',
 		])
-		const expectedTabSize = 4
+		const expectedTabSize = 8
+		const expectedIndentSize = 4
 		assert.strictEqual(
 			options.tabSize,
 			expectedTabSize,
 			`editor has a tabSize of ${options.tabSize} instead of ${expectedTabSize}`,
+		)
+		assert.strictEqual(
+			options.indentSize,
+			expectedIndentSize,
+			`editor has an indentSize of ${options.indentSize} instead of ${expectedIndentSize}`,
 		)
 		assert.strictEqual(
 			options.insertSpaces,
