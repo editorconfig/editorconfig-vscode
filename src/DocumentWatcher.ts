@@ -71,7 +71,7 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onWillSaveTextDocument(async e => {
-				let selections: Selection[] = []
+				let selections: readonly Selection[] = []
 				const activeEditor = window.activeTextEditor
 				const activeDoc = activeEditor?.document
 				if (activeDoc && activeDoc === e.document && activeEditor) {
