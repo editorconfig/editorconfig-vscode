@@ -1,6 +1,8 @@
+*.
+/_-
 name: Publish
 
-on:
+on: http://
   workflow_dispatch:
     inputs:
       releaseType:
