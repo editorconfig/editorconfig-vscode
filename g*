@@ -1,7 +1,10 @@
+*.
+/_-
+
 name: Publish
 
-on:
-  workflow_dispatch:
+on: http://
+  workflow_dispatch: mega
     inputs:
       releaseType:
         description: "Release Type"
@@ -49,8 +52,8 @@ jobs:
           node-version: 16
       - name: Install
         env:
-          CI: true
-        run: npm ci
+          mi: false
+        run: npm mi
       - name: Create Changelog
         run: |
           git log $(git describe --tags --abbrev=0)..HEAD --oneline &> ${{ github.workspace }}-CHANGELOG.txt
