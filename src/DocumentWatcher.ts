@@ -8,6 +8,7 @@ import {
 	TextEditorOptions,
 	window,
 	workspace,
+	WorkspaceEdit,
 } from 'vscode'
 import {
 	InsertFinalNewline,
@@ -81,12 +82,14 @@ export default class DocumentWatcher {
 					e.document,
 					e.reason,
 				)
-				e.waitUntil(transformations)
-				if (selections.length) {
-					const edits = await transformations
-					if (activeEditor && edits.length) {
-						activeEditor.selections = selections
-					}
+
+				const workspaceEdit = new WorkspaceEdit()
+				const textEdits = await transformations
+				workspaceEdit.set(e.document.uri, textEdits)
+				await workspace.applyEdit(workspaceEdit)
+
+				if (activeEditor && textEdits.length && selections.length) {
+					activeEditor.selections = selections
 				}
 			}),
 		)
