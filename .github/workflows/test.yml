@@ -27,6 +27,12 @@ jobs:
         run: git config --global core.autocrlf false
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Cache vscode installation
+        uses: actions/cache@v4
+        with:
+          path: .vscode-test
+          key: vscode-installation-${{ matrix.os }}-${{ github.sha }}
+          restore-keys: vscode-installation-${{ matrix.os }}-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
