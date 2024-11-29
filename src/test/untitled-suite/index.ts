@@ -1,6 +1,6 @@
-import * as glob from 'glob'
-import * as Mocha from 'mocha'
-import * as path from 'path'
+import glob from 'fast-glob'
+import Mocha from 'mocha'
+import path from 'path'
 
 export function run(): Promise<void> {
 	// Create the mocha test
@@ -10,27 +10,23 @@ export function run(): Promise<void> {
 		ui: 'tdd',
 	})
 
-	return new Promise((c, e) => {
-		glob('./**/*.test.js', { cwd: __dirname }, (err, files) => {
-			if (err) {
-				return e(err)
-			}
+	return new Promise((resolve, reject) => {
+		const files = glob.sync('./**/*.test.js', { cwd: __dirname })
 
-			// Add files to the test suite
-			files.forEach(f => mocha.addFile(path.resolve(__dirname, f)))
+		// Add files to the test suite
+		files.forEach(file => mocha.addFile(path.resolve(__dirname, file)))
 
-			try {
-				// Run the mocha test
-				mocha.run(failures => {
-					if (failures > 0) {
-						e(new Error(`${failures} tests failed.`))
-					} else {
-						c()
-					}
-				})
-			} catch (err) {
-				e(err)
-			}
-		})
+		try {
+			// Run the mocha test
+			mocha.run(failures => {
+				if (failures > 0) {
+					reject(new Error(`${failures} tests failed.`))
+				} else {
+					resolve()
+				}
+			})
+		} catch (err) {
+			reject(err)
+		}
 	})
 }

@@ -1,10 +1,6 @@
-import { readFile as _readFile } from 'fs'
 import { EOL } from 'os'
-import { resolve } from 'path'
-import { promisify } from 'util'
 import { FileType, Uri, window, workspace } from 'vscode'
-
-const readFile = promisify(_readFile)
+import defaultTemplate from '../DefaultTemplate.editorconfig'
 
 /**
  * Generate a .editorconfig file in the root of the workspace based on the
@@ -46,17 +42,12 @@ export async function generateEditorConfig(uri: Uri) {
 
 		if (!generateAuto) {
 			const template = ec.get<string>('template') || 'default'
-			const defaultTemplatePath = resolve(
-				__dirname,
-				'..',
-				'DefaultTemplate.editorconfig',
-			)
 
 			let templateBuffer: Buffer
 			try {
-				templateBuffer = await readFile(
-					/^default$/i.test(template) ? defaultTemplatePath : template,
-				)
+				templateBuffer = /^default$/i.test(template)
+					? Buffer.from(defaultTemplate)
+					: Buffer.from(await workspace.fs.readFile(Uri.file(template)))
 			} catch (error) {
 				window.showErrorMessage(
 					[

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2019"],
     "module": "CommonJS",
@@ -10,11 +9,11 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "out",
-    "rootDir": "src",
-    "sourceMap": true,
     "strict": true,
-    "target": "ES2019"
+    "target": "ES2019",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
   },
   "exclude": ["node_modules", "out", ".vscode-test"]
 }

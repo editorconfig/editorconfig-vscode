@@ -6,7 +6,8 @@
   "version": "0.16.6",
   "icon": "EditorConfig_icon.png",
   "engines": {
-    "vscode": "^1.51.1"
+    "vscode": "^1.51.1",
+    "node": ">=18"
   },
   "author": "EditorConfig Team",
   "license": "MIT",
@@ -33,8 +34,8 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/editorConfigMain.js",
-  "types": "./out/editorConfigMain.d.ts",
+  "main": "./out/desktop/editorConfigMain.js",
+  "browser": "./out/browser/editorConfigMain.js",
   "contributes": {
     "commands": [
       {
@@ -96,47 +97,43 @@
   },
   "capabilities": {
     "virtualWorkspaces": {
-      "supported": false,
-      "description": "The `editorconfig` dependency requires fs access for parsing the config to use."
+      "supported": true
     }
   },
   "dependencies": {
     "editorconfig": "^0.15"
   },
   "devDependencies": {
-    "@types/glob": "^7",
     "@types/mocha": "^8",
-    "@types/node": "^14",
+    "@types/node": "^18",
     "@types/vscode": "^1",
     "@typescript-eslint/eslint-plugin": "^4",
     "@typescript-eslint/parser": "^4",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
+    "@vscode/test-electron": "^2",
     "eslint": "^7",
     "eslint-config-prettier": "^6",
     "eslint-config-xo": "^0.33",
     "eslint-plugin-prettier": "^3",
-    "glob": "^7",
+    "fast-glob": "^3.3.2",
     "husky": "^4",
     "lint-staged": "^10",
     "mocha": "^8",
-    "prettier": "^2",
-    "rimraf": "^3",
+    "prettier": "^3",
     "semver": "^7.3.5",
+    "tsup": "^8.3.5",
     "typescript": "^4",
     "vsce": "^2.7.0",
-    "vscode-test": "^1",
     "vscode-test-utils": "^1"
   },
   "scripts": {
-    "clean": "rimraf out",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "postbuild": "cp -r src/test/suite/fixtures out/test/suite && cp -r src/test/untitled-suite/fixtures out/test/untitled-suite && cp src/DefaultTemplate.editorconfig out",
+    "build": "tsup",
     "lint": "eslint src/**/*.ts",
     "pretest": "npm run lint && npm run build",
     "prewatch": "npm run build",
-    "watch": "tsc -watch",
-    "check-types": "tsc --noEmit",
-    "test": "node out/test/runTest.js",
+    "watch": "tsup --watch",
+    "check-types": "tsc",
+    "test": "node out/desktop/test/runTest.js",
     "vscode:prepublish": "npm run build"
   },
   "husky": {

@@ -20,11 +20,11 @@
       "args": [
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceRoot}",
-        "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
+        "--extensionTestsPath=${workspaceRoot}/out/desktop/test/suite/index"
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/out/test/**/*.js"],
+      "outFiles": ["${workspaceRoot}/out/desktop/test/**/*.js"],
       "preLaunchTask": "npm: watch"
     }
   ]
