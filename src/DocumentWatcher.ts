@@ -76,7 +76,7 @@ export default class DocumentWatcher {
 				const activeEditor = window.activeTextEditor
 				const activeDoc = activeEditor?.document
 				if (activeDoc && activeDoc === e.document && activeEditor) {
-					selections = activeEditor.selections
+					selections = [...activeEditor.selections]
 				}
 				const transformations = this.calculatePreSaveTransformations(
 					e.document,
