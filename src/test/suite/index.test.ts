@@ -286,7 +286,9 @@ suite('EditorConfig extension', function () {
 	})
 
 	test('keep selection on format', async () => {
-		await withSetting('insert_final_newline', 'true').saveText('foobar')
+		await withSetting('insert_final_newline', 'true', {
+			fileName: 'test-selection',
+		}).saveText('foobar')
 		assert(window.activeTextEditor, 'no active editor')
 
 		assert.strictEqual(
@@ -307,15 +309,16 @@ function withSetting(
 	value: string,
 	options: {
 		contents?: string
+		fileName?: string
 	} = {},
 ) {
 	return {
 		async getText() {
-			return (await createDoc(options.contents)).getText()
+			return (await createDoc(options.contents, options.fileName)).getText()
 		},
 		saveText(text: string) {
 			return new Promise<string>(async resolve => {
-				const doc = await createDoc(options.contents)
+				const doc = await createDoc(options.contents, options.fileName)
 				workspace.onDidChangeTextDocument(doc.save)
 				workspace.onDidSaveTextDocument(savedDoc => {
 					assert.strictEqual(savedDoc.isDirty, false, 'dirty saved doc')
@@ -331,20 +334,14 @@ function withSetting(
 			})
 		},
 	}
-	async function createDoc(contents = '') {
+	async function createDoc(contents = '', name = 'test') {
 		const uri = await utils.createFile(
 			contents,
-			generateFixturePath().next().value,
+			getFixturePath([rule, value, name]),
 		)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
 		await wait(50) // wait for EditorConfig to apply new settings
 		return doc
-	}
-	function* generateFixturePath(): Generator<string> {
-		let index = 0
-		while (true) {
-			yield getFixturePath([rule, value, `${test}-${index++}`])
-		}
 	}
 }
