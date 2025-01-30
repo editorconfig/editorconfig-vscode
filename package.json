@@ -104,6 +104,7 @@
     "editorconfig": "^2.0.0"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^18.19.74",
     "@types/vscode": "^1.82.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
