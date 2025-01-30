@@ -334,11 +334,17 @@ function withSetting(
 	async function createDoc(contents = '') {
 		const uri = await utils.createFile(
 			contents,
-			getFixturePath([rule, value, Math.random().toString(36)]),
+			generateFixturePath().next().value,
 		)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
 		await wait(50) // wait for EditorConfig to apply new settings
 		return doc
+	}
+	function* generateFixturePath(): Generator<string> {
+		let index = 0
+		while (true) {
+			yield getFixturePath([rule, value, `${test}-${index++}`])
+		}
 	}
 }
