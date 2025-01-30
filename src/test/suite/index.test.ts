@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as os from 'os'
-import { Position, window, workspace, WorkspaceEdit, Selection } from 'vscode'
+import { Position, window, workspace, WorkspaceEdit } from 'vscode'
 import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
 
 import * as utils from 'vscode-test-utils'
