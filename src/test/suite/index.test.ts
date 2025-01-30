@@ -1,13 +1,6 @@
 import * as assert from 'assert'
 import * as os from 'os'
-import {
-	Position,
-	window,
-	workspace,
-	WorkspaceEdit,
-	Selection,
-	TextDocument,
-} from 'vscode'
+import { Position, window, workspace, WorkspaceEdit, Selection } from 'vscode'
 import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
 
 import * as utils from 'vscode-test-utils'
@@ -293,24 +286,17 @@ suite('EditorConfig extension', function () {
 	})
 
 	test('keep selection on format', async () => {
-		const obj = withSetting('insert_final_newline', 'true')
-		await obj.createDoc('bar')
+		await withSetting('insert_final_newline', 'true').saveText('foobar')
 		assert(window.activeTextEditor, 'no active editor')
-
-		const position = new Position(0, 3)
-		const selection = new Selection(position, position)
-		window.activeTextEditor.selection = selection
-
-		await obj.saveText('foo')
 
 		assert.strictEqual(
 			window.activeTextEditor.selection.start.line,
-			selection.start.line,
+			0,
 			'editor selection start line changed',
 		)
 		assert.strictEqual(
 			window.activeTextEditor.selection.end.line,
-			selection.end.line,
+			0,
 			'editor selection end line changed',
 		)
 	})
@@ -323,12 +309,13 @@ function withSetting(
 		contents?: string
 	} = {},
 ) {
-	let doc: TextDocument | undefined
 	return {
-		doc,
+		async getText() {
+			return (await createDoc(options.contents)).getText()
+		},
 		saveText(text: string) {
 			return new Promise<string>(async resolve => {
-				const doc = this.doc ?? (await this.createDoc(options.contents))
+				const doc = await createDoc(options.contents)
 				workspace.onDidChangeTextDocument(doc.save)
 				workspace.onDidSaveTextDocument(savedDoc => {
 					assert.strictEqual(savedDoc.isDirty, false, 'dirty saved doc')
@@ -343,16 +330,15 @@ function withSetting(
 				)
 			})
 		},
-		async createDoc(contents = '') {
-			const uri = await utils.createFile(
-				contents,
-				getFixturePath([rule, value, Math.random().toString(36)]),
-			)
-			const doc = await workspace.openTextDocument(uri)
-			this.doc = doc
-			await window.showTextDocument(doc)
-			await wait(50) // wait for EditorConfig to apply new settings
-			return doc
-		},
+	}
+	async function createDoc(contents = '') {
+		const uri = await utils.createFile(
+			contents,
+			getFixturePath([rule, value, Math.random().toString(36)]),
+		)
+		const doc = await workspace.openTextDocument(uri)
+		await window.showTextDocument(doc)
+		await wait(50) // wait for EditorConfig to apply new settings
+		return doc
 	}
 }
