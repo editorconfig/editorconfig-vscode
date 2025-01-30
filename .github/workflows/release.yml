@@ -48,8 +48,6 @@ jobs:
         with:
           node-version: lts/*
       - name: Install
-        env:
-          CI: true
         run: npm ci
       - name: Create Changelog
         run: |
