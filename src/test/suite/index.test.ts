@@ -291,6 +291,7 @@ suite('EditorConfig extension', function () {
 		}).saveText('foobar')
 		assert(window.activeTextEditor, 'no active editor')
 
+                // Before saving, the selection is on line 0. This should remain unchanged.
 		assert.strictEqual(
 			window.activeTextEditor.selection.start.line,
 			0,
