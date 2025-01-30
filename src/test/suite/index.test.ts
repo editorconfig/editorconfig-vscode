@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as os from 'os'
-import { Position, window, workspace, WorkspaceEdit } from 'vscode'
+import { Position, window, workspace, WorkspaceEdit, Uri } from 'vscode'
 import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
 
 import * as utils from 'vscode-test-utils'
@@ -335,10 +335,15 @@ function withSetting(
 		},
 	}
 	async function createDoc(contents = '', name = 'test') {
-		const uri = await utils.createFile(
-			contents,
-			getFixturePath([rule, value, name]),
-		)
+		const fixturePath = getFixturePath([rule, value, name])
+
+		try {
+			await workspace.fs.delete(Uri.file(fixturePath))
+		} catch {
+			// ignore
+		}
+
+		const uri = await utils.createFile(contents, fixturePath)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
 		await wait(50) // wait for EditorConfig to apply new settings
