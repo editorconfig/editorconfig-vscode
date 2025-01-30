@@ -29,9 +29,7 @@ async function main() {
 			extensionTestsPath: untitledExtensionTestsPath,
 			launchArgs: [untitledWorkspace],
 		})
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	} catch (err) {
-		// tslint:disable-next-line:no-console
+	} catch {
 		console.error('Failed to run tests')
 		process.exit(1)
 	}
