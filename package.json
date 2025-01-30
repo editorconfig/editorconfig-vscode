@@ -111,9 +111,9 @@
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vscode/test-electron": "^2.4.1",
-    "eslint": "^8.0.0",
+    "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
-    "eslint-config-xo": "^0.45.0",
+    "eslint-config-xo": "^0.46.0",
     "eslint-plugin-prettier": "^5.2.3",
     "glob": "^11.0.1",
     "husky": "^9.1.7",
@@ -123,7 +123,7 @@
     "rimraf": "^6.0.1",
     "semver": "^7.7.0",
     "typescript": "~5.7.3",
-    "vsce": "^2.15.0",
+    "@vscode/vsce": "^3.2.2",
     "vscode-test-utils": "^1.0.0"
   },
   "scripts": {
