@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as os from 'os'
-import { Position, window, workspace, WorkspaceEdit, Uri } from 'vscode'
+import { Position, window, workspace, WorkspaceEdit } from 'vscode'
 import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
 
 import * as utils from 'vscode-test-utils'
@@ -291,7 +291,7 @@ suite('EditorConfig extension', function () {
 		}).saveText('foobar')
 		assert(window.activeTextEditor, 'no active editor')
 
-                // Before saving, the selection is on line 0. This should remain unchanged.
+		// Before saving, the selection is on line 0. This should remain unchanged.
 		assert.strictEqual(
 			window.activeTextEditor.selection.start.line,
 			0,
@@ -336,18 +336,13 @@ function withSetting(
 		},
 	}
 	async function createDoc(contents = '', name = 'test') {
-		const fixturePath = getFixturePath([rule, value, name])
-
-		try {
-			await workspace.fs.delete(Uri.file(fixturePath))
-		} catch {
-			// ignore
-		}
-
-		const uri = await utils.createFile(contents, fixturePath)
+		const uri = await utils.createFile(
+			contents,
+			getFixturePath([rule, value, name]),
+		)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
-		await wait(50) // wait for EditorConfig to apply new settings
+		await wait(100) // wait for EditorConfig to apply new settings
 		return doc
 	}
 }
