@@ -347,7 +347,7 @@ function withSetting(
 		const uri = await utils.createFile(contents, fixturePath)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
-		await wait(50) // wait for EditorConfig to apply new settings
+		await wait(100) // wait for EditorConfig to apply new settings
 		return doc
 	}
 }
