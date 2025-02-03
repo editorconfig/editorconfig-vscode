@@ -54,6 +54,11 @@
           "type": "string",
           "default": "default",
           "description": "If generateAuto is false, this template path will be used for each newly-generated .editorconfig file."
+        },
+        "editorconfig.showMenuEntry": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the 'Generate .editorconfig' entry in the context menu of the Explorer view."
         }
       }
     },
@@ -61,13 +66,13 @@
       "commandPalette": [
         {
           "command": "EditorConfig.generate",
-          "when": "explorerResourceIsFolder"
+          "when": "explorerResourceIsFolder && config.editorconfig.showMenuEntry"
         }
       ],
       "explorer/context": [
         {
           "command": "EditorConfig.generate",
-          "when": "explorerResourceIsFolder",
+          "when": "explorerResourceIsFolder && config.editorconfig.showMenuEntry",
           "group": "EditorConfig@1"
         }
       ]
