@@ -10,13 +10,12 @@ on:
 
 jobs:
   test:
-    name: Test on node ${{ matrix.node }} and ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        node: [20, 22]
         os:
           - ubuntu-latest
           - windows-latest
@@ -30,7 +29,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: lts/*
       - name: Start xvfb
         run: |
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &

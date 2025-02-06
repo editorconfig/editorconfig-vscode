@@ -9,7 +9,7 @@
     {
       "description": "Use types of the minimum supported Node version",
       "matchPackageNames": ["@types/node"],
-      "allowedVersions": "<21"
+      "allowedVersions": "=18"
     }
   ],
   "schedule": ["on Wednesday"]
