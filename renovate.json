@@ -5,5 +5,12 @@
   "git-submodules": {
     "enabled": true
   },
+  "packageRules": [
+    {
+      "description": "Use types of the minimum supported Node version",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<21"
+    }
+  ],
   "schedule": ["on Wednesday"]
 }
