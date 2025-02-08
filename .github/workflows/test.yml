@@ -29,6 +29,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
+          # In CI, this Node is only used to
+          # - Install dependencies,
+          # - Run tools like typescript and eslint
+          # - Execute the runTests function of the @vscode/test-electron package
+          #
+          # Therefore, it doesn't have to match the Node version supported by
+          # VSCode.
           node-version: lts/*
       - name: Start xvfb
         run: |
