@@ -37,6 +37,7 @@ jobs:
           # Therefore, it doesn't have to match the Node version supported by
           # VSCode.
           node-version: lts/*
+          cache: npm
       - name: Start xvfb
         run: |
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
