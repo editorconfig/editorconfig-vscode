@@ -65,13 +65,13 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onDidSaveTextDocument(doc => {
-				if (path.basename(doc.fileName) === '.editorconfig') {
-					this.log('.editorconfig file saved.')
-				}
-
 				const activeEditor = window.activeTextEditor
 				if (activeEditor && previousSelections.length) {
 					activeEditor.selections = previousSelections
+				}
+
+				if (path.basename(doc.fileName) === '.editorconfig') {
+					this.log('.editorconfig file saved.')
 				}
 			}),
 		)
