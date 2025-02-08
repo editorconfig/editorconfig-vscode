@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "group:allNonMajor"],
+  "rangeStrategy": "bump",
+  "git-submodules": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Use types of the minimum supported Node version",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "=18"
+    }
+  ],
+  "schedule": ["on Wednesday"]
+}

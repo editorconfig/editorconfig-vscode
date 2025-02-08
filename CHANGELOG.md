@@ -1,3 +1,11 @@
+## 0.17.0
+
+- **New:** add option to disable the "Generate .editorconfig" context menu entry (by @SunsetTechuila)
+
+## 0.16.7
+
+- **Fix:** keep selection on formatting (by @SunsetTechuila)
+
 ## 0.16.6
 
 - **Fix:** apply config to untitled files

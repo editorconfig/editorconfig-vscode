@@ -5,6 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2019"],
     "module": "CommonJS",
+    "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

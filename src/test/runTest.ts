@@ -1,6 +1,6 @@
 import * as path from 'path'
 
-import { runTests } from 'vscode-test'
+import { runTests } from '@vscode/test-electron'
 
 async function main() {
 	try {
@@ -29,8 +29,7 @@ async function main() {
 			extensionTestsPath: untitledExtensionTestsPath,
 			launchArgs: [untitledWorkspace],
 		})
-	} catch (err) {
-		// tslint:disable-next-line:no-console
+	} catch {
 		console.error('Failed to run tests')
 		process.exit(1)
 	}

@@ -61,9 +61,7 @@ export async function applyTextEditorOptions(
 /**
  * Picks EditorConfig-relevant props from the editor's default configuration.
  */
-export function pickWorkspaceDefaults(
-	doc?: TextDocument,
-): {
+export function pickWorkspaceDefaults(doc?: TextDocument): {
 	/**
 	 * The number of spaces a tab is equal to. When `editor.detectIndentation`
 	 * is on, this property value will be `undefined`.
@@ -83,7 +81,7 @@ export function pickWorkspaceDefaults(
 		: {
 				tabSize: workspaceConfig.get<number>('tabSize'),
 				insertSpaces: workspaceConfig.get<boolean>('insertSpaces'),
-		  }
+			}
 }
 
 export type ResolvedCoreConfig = editorconfig.KnownProps &
@@ -115,9 +113,7 @@ export async function resolveCoreConfig(
 	return config as ResolvedCoreConfig
 }
 
-export function resolveFile(
-	doc: TextDocument,
-): {
+export function resolveFile(doc: TextDocument): {
 	fileName?: string
 	relativePath?: string
 } {
@@ -151,8 +147,8 @@ export function fromEditorConfig(
 	const resolved: TextEditorOptions = {
 		tabSize:
 			config.indent_style === 'tab'
-				? config.tab_width ?? config.indent_size
-				: config.indent_size ?? config.tab_width,
+				? (config.tab_width ?? config.indent_size)
+				: (config.indent_size ?? config.tab_width),
 	}
 	if (resolved.tabSize === 'tab') {
 		resolved.tabSize = config.tab_width
@@ -163,10 +159,10 @@ export function fromEditorConfig(
 		config.indent_style === 'space'
 			? {
 					insertSpaces: config.indent_style === 'space',
-			  }
+				}
 			: {}),
 		tabSize:
-			resolved.tabSize && resolved.tabSize >= 0
+			resolved.tabSize && Number(resolved.tabSize) >= 0
 				? resolved.tabSize
 				: defaults.tabSize,
 	}

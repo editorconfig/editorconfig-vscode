@@ -39,6 +39,8 @@ export default class DocumentWatcher {
 
 		const subscriptions: Disposable[] = []
 
+		let previousSelections: Selection[] = []
+
 		this.handleTextEditorChange(window.activeTextEditor)
 
 		subscriptions.push(
@@ -63,6 +65,11 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onDidSaveTextDocument(doc => {
+				const activeEditor = window.activeTextEditor
+				if (activeEditor && previousSelections.length) {
+					activeEditor.selections = previousSelections
+				}
+
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
@@ -71,23 +78,16 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onWillSaveTextDocument(async e => {
-				let selections: Selection[] = []
 				const activeEditor = window.activeTextEditor
 				const activeDoc = activeEditor?.document
 				if (activeDoc && activeDoc === e.document && activeEditor) {
-					selections = activeEditor.selections
+					previousSelections = [...activeEditor.selections]
 				}
 				const transformations = this.calculatePreSaveTransformations(
 					e.document,
 					e.reason,
 				)
 				e.waitUntil(transformations)
-				if (selections.length) {
-					const edits = await transformations
-					if (activeEditor && edits.length) {
-						activeEditor.selections = selections
-					}
-				}
 			}),
 		)
 

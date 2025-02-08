@@ -29,8 +29,14 @@ export async function generateEditorConfig(uri: Uri) {
 			)
 			return
 		}
-	} catch (err) {
-		if (err) {
+	} catch (err: unknown) {
+		if (
+			typeof err === 'object' &&
+			err !== null &&
+			'name' in err &&
+			'message' in err &&
+			typeof err.message === 'string'
+		) {
 			if (err.name === 'EntryNotFound (FileSystemError)') {
 				writeFile()
 			} else {
@@ -58,6 +64,14 @@ export async function generateEditorConfig(uri: Uri) {
 					/^default$/i.test(template) ? defaultTemplatePath : template,
 				)
 			} catch (error) {
+				if (
+					typeof error !== 'object' ||
+					error === null ||
+					!('message' in error) ||
+					typeof error.message !== 'string'
+				) {
+					return
+				}
 				window.showErrorMessage(
 					[
 						`Could not read EditorConfig template file at ${template}`,
@@ -70,6 +84,14 @@ export async function generateEditorConfig(uri: Uri) {
 			try {
 				workspace.fs.writeFile(editorConfigUri, templateBuffer)
 			} catch (error) {
+				if (
+					typeof error !== 'object' ||
+					error === null ||
+					!('message' in error) ||
+					typeof error.message !== 'string'
+				) {
+					return
+				}
 				window.showErrorMessage(error.message)
 			}
 
@@ -139,10 +161,16 @@ export async function generateEditorConfig(uri: Uri) {
 				Buffer.from(settingsLines.join(eolKey)),
 			)
 		} catch (err) {
-			if (err) {
-				window.showErrorMessage(err.message)
+			if (
+				typeof err !== 'object' ||
+				err === null ||
+				!('message' in err) ||
+				typeof err.message !== 'string'
+			) {
 				return
 			}
+
+			window.showErrorMessage(err.message)
 		}
 	}
 }

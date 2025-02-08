@@ -1,4 +1,4 @@
-import * as glob from 'glob'
+import { globSync } from 'glob'
 import * as Mocha from 'mocha'
 import * as path from 'path'
 
@@ -11,26 +11,22 @@ export function run(): Promise<void> {
 	})
 
 	return new Promise((c, e) => {
-		glob('./**/*.test.js', { cwd: __dirname }, (err, files) => {
-			if (err) {
-				return e(err)
-			}
+		const files = globSync('./**/*.test.js', { cwd: __dirname })
 
-			// Add files to the test suite
-			files.forEach(f => mocha.addFile(path.resolve(__dirname, f)))
+		// Add files to the test suite
+		files.forEach(f => mocha.addFile(path.resolve(__dirname, f)))
 
-			try {
-				// Run the mocha test
-				mocha.run(failures => {
-					if (failures > 0) {
-						e(new Error(`${failures} tests failed.`))
-					} else {
-						c()
-					}
-				})
-			} catch (err) {
-				e(err)
-			}
-		})
+		try {
+			// Run the mocha test
+			mocha.run(failures => {
+				if (failures > 0) {
+					e(new Error(`${failures} tests failed.`))
+				} else {
+					c()
+				}
+			})
+		} catch (err) {
+			e(err)
+		}
 	})
 }

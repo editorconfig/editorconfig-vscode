@@ -284,6 +284,25 @@ suite('EditorConfig extension', function () {
 			`editor has insertSpaces: ${options.insertSpaces}`,
 		)
 	})
+
+	test('keep selection on format', async () => {
+		await withSetting('insert_final_newline', 'true', {
+			fileName: 'test-selection',
+		}).saveText('foobar')
+		assert(window.activeTextEditor, 'no active editor')
+
+		// Before saving, the selection is on line 0. This should remain unchanged.
+		assert.strictEqual(
+			window.activeTextEditor.selection.start.line,
+			0,
+			'editor selection start line changed',
+		)
+		assert.strictEqual(
+			window.activeTextEditor.selection.end.line,
+			0,
+			'editor selection end line changed',
+		)
+	})
 })
 
 function withSetting(
@@ -291,15 +310,16 @@ function withSetting(
 	value: string,
 	options: {
 		contents?: string
+		fileName?: string
 	} = {},
 ) {
 	return {
 		async getText() {
-			return (await createDoc(options.contents)).getText()
+			return (await createDoc(options.contents, options.fileName)).getText()
 		},
 		saveText(text: string) {
 			return new Promise<string>(async resolve => {
-				const doc = await createDoc(options.contents)
+				const doc = await createDoc(options.contents, options.fileName)
 				workspace.onDidChangeTextDocument(doc.save)
 				workspace.onDidSaveTextDocument(savedDoc => {
 					assert.strictEqual(savedDoc.isDirty, false, 'dirty saved doc')
@@ -315,11 +335,10 @@ function withSetting(
 			})
 		},
 	}
-
-	async function createDoc(contents = '') {
+	async function createDoc(contents = '', name = 'test') {
 		const uri = await utils.createFile(
 			contents,
-			getFixturePath([rule, value, 'test']),
+			getFixturePath([rule, value, name]),
 		)
 		const doc = await workspace.openTextDocument(uri)
 		await window.showTextDocument(doc)
