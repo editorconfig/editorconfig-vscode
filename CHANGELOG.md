@@ -1,6 +1,7 @@
 ## 0.17.0
 
 - **New:** add option to disable the "Generate .editorconfig" context menu entry (by @SunsetTechuila)
+- **New:** allow the extension to be active in untrusted workspaces (by @jashug)
 - **Fix:** aply formatting before file saving (by @SunsetTechuila)
 
 ## 0.16.7
