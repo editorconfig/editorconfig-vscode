@@ -1,7 +1,6 @@
 ## 0.17.0
 
 - **New:** add option to disable the "Generate .editorconfig" context menu entry (by @SunsetTechuila)
--
 - **Fix:** aply formatting before file saving (by @SunsetTechuila)
 
 ## 0.16.7
