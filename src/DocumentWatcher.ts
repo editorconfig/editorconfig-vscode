@@ -41,7 +41,7 @@ export default class DocumentWatcher {
 
 		let editedDoc: TextDocument | undefined
 
-		let shouldRestoreSelection = false
+		let shouldRestoreSelections = false
 
 		let previousSelections: Selection[] = []
 
@@ -72,13 +72,13 @@ export default class DocumentWatcher {
 				const activeEditor = window.activeTextEditor
 				const activeDoc = activeEditor?.document
 				if (
-					shouldRestoreSelection &&
+					shouldRestoreSelections &&
 					activeEditor &&
 					doc === editedDoc &&
 					doc === activeDoc
 				) {
 					activeEditor.selections = [...previousSelections]
-					shouldRestoreSelection = false
+					shouldRestoreSelections = false
 				}
 
 				if (path.basename(doc.fileName) === '.editorconfig') {
@@ -99,7 +99,7 @@ export default class DocumentWatcher {
 					e.reason,
 				)
 				e.waitUntil(transformations)
-				shouldRestoreSelection = (await transformations).length > 0
+				shouldRestoreSelections = (await transformations).length > 0
 				editedDoc = activeDoc
 			}),
 		)
