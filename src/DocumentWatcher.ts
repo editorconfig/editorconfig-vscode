@@ -1,7 +1,6 @@
 import * as path from 'path'
 import {
 	Disposable,
-	Selection,
 	TextDocument,
 	TextDocumentSaveReason,
 	TextEditor,
@@ -39,8 +38,6 @@ export default class DocumentWatcher {
 
 		const subscriptions: Disposable[] = []
 
-		let previousSelections: Selection[] = []
-
 		this.handleTextEditorChange(window.activeTextEditor)
 
 		subscriptions.push(
@@ -65,11 +62,6 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onDidSaveTextDocument(doc => {
-				const activeEditor = window.activeTextEditor
-				if (activeEditor && previousSelections.length) {
-					activeEditor.selections = previousSelections
-				}
-
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
@@ -78,11 +70,6 @@ export default class DocumentWatcher {
 
 		subscriptions.push(
 			workspace.onWillSaveTextDocument(async e => {
-				const activeEditor = window.activeTextEditor
-				const activeDoc = activeEditor?.document
-				if (activeDoc && activeDoc === e.document && activeEditor) {
-					previousSelections = [...activeEditor.selections]
-				}
 				const transformations = this.calculatePreSaveTransformations(
 					e.document,
 					e.reason,
