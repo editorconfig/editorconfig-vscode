@@ -1,5 +1,11 @@
 import { KnownProps } from 'editorconfig'
-import { Position, TextDocument, TextEdit } from 'vscode'
+import {
+	commands,
+	Position,
+	TextDocument,
+	TextEdit,
+	window,
+} from 'vscode'
 
 import { PreSaveTransformation } from './PreSaveTransformation'
 
@@ -22,6 +28,14 @@ export class InsertFinalNewline extends PreSaveTransformation {
 			lastLine.isEmptyOrWhitespace
 		) {
 			return { edits: [] }
+		}
+
+		if (window.activeTextEditor && window.activeTextEditor.document === doc) {
+			commands.executeCommand('editor.action.insertFinalNewLine')
+			return {
+				edits: [],
+				message: 'editor.action.insertFinalNewLine',
+			}
 		}
 
 		const position = new Position(lastLine.lineNumber, lastLine.text.length)
