@@ -1,6 +1,6 @@
 ## 0.17.1
 
-- **Fix:** When `insert_final_newline` is set to `true` selections don't change when typing fast/whitespace render mode chages/using `INSERT` mode in vscodevim
+- **Fix:** The cursor position doesn't unexpectedly change when typing fast/whitespace render mode chages/using `INSERT` mode in vscodevim
 - **Revert:** The cursor position changes if it was on the last character of the last line when the last newline was inserted. This is an expected regression that will be fixed in the next version after the VSCode update
 
 ## 0.17.0
