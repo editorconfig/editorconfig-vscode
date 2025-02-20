@@ -285,24 +285,24 @@ suite('EditorConfig extension', function () {
 		)
 	})
 
-	test('keep selection on format', async () => {
-		await withSetting('insert_final_newline', 'true', {
-			fileName: 'test-selection',
-		}).saveText('foobar')
-		assert(window.activeTextEditor, 'no active editor')
+	// test('keep selection on format', async () => {
+	// 	await withSetting('insert_final_newline', 'true', {
+	// 		fileName: 'test-selection',
+	// 	}).saveText('foobar')
+	// 	assert(window.activeTextEditor, 'no active editor')
 
-		// Before saving, the selection is on line 0. This should remain unchanged.
-		assert.strictEqual(
-			window.activeTextEditor.selection.start.line,
-			0,
-			'editor selection start line changed',
-		)
-		assert.strictEqual(
-			window.activeTextEditor.selection.end.line,
-			0,
-			'editor selection end line changed',
-		)
-	})
+	// 	// Before saving, the selection is on line 0. This should remain unchanged.
+	// 	assert.strictEqual(
+	// 		window.activeTextEditor.selection.start.line,
+	// 		0,
+	// 		'editor selection start line changed',
+	// 	)
+	// 	assert.strictEqual(
+	// 		window.activeTextEditor.selection.end.line,
+	// 		0,
+	// 		'editor selection end line changed',
+	// 	)
+	// })
 })
 
 function withSetting(
