@@ -123,8 +123,6 @@
     "eslint-config-xo": "^0.45.0",
     "eslint-plugin-prettier": "^5.2.3",
     "glob": "^10.4.5",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.4.3",
     "mocha": "^11.1.0",
     "prettier": "^3.4.2",
     "rimraf": "^5.0.10",
@@ -144,28 +142,7 @@
     "watch": "tsc -watch",
     "check-types": "tsc --noEmit",
     "test": "node out/test/runTest.js",
-    "vscode:prepublish": "npm run build",
-    "prepare": "husky"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run check-types"
-    }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
-    ],
-    "*.{json,md}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.js": [
-      "git reset"
-    ]
+    "vscode:prepublish": "npm run build"
   },
   "eslintConfig": {
     "extends": [
