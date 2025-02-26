@@ -127,7 +127,7 @@
     "prettier": "^3.4.2",
     "rimraf": "^5.0.10",
     "typescript": "~5.7.3",
-    "@vscode/vsce": "^2.32.0",
+    "@vscode/vsce": "^3.2.2",
     "vscode-test-utils": "^1.0.0"
   },
   "scripts": {
