@@ -6,7 +6,7 @@
   "version": "0.17.1",
   "icon": "EditorConfig_icon.png",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.90.0"
   },
   "author": "EditorConfig Team",
   "license": "MIT",
@@ -109,12 +109,12 @@
     }
   },
   "dependencies": {
-    "editorconfig": "^2.0.0"
+    "editorconfig": "^2.0.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^18.19.74",
-    "@types/vscode": "^1.82.0",
+    "@types/node": "^20.17.19",
+    "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vscode/test-electron": "^2.4.1",
