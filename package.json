@@ -109,7 +109,7 @@
     }
   },
   "dependencies": {
-    "editorconfig": "^2.0.0"
+    "editorconfig": "^2.0.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
