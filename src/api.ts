@@ -1,5 +1,12 @@
 import * as editorconfig from 'editorconfig'
-import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
+import {
+	TextDocument,
+	TextEditorOptions,
+	Uri,
+	window,
+	workspace,
+	commands,
+} from 'vscode'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -15,16 +22,31 @@ export async function resolveTextEditorOptions(
 		onEmptyConfig?: (relativePath: string) => void
 	} = {},
 ) {
-	const editorconfigSettings = await resolveCoreConfig(doc, {
-		onBeforeResolve,
-	})
-	if (editorconfigSettings) {
-		return fromEditorConfig(editorconfigSettings, pickWorkspaceDefaults(doc))
+	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve })
+	if (coreConfig) {
+		const defaults = pickWorkspaceDefaults(doc)
+		const converted = fromEditorConfig(coreConfig)
+		const combined = { ...defaults, ...converted }
+
+		// decouple tabSize from indentSize when possible
+		if (
+			!Number.isInteger(coreConfig.tab_width) &&
+			!(combined.insertSpaces && combined.indentSize === 'tabSize') &&
+			!(
+				coreConfig.indent_style === 'tab' &&
+				Number.isInteger(coreConfig.indent_size)
+			) &&
+			Number.isInteger(defaults.tabSize)
+		) {
+			combined.tabSize = defaults.tabSize
+		}
+
+		return combined
 	}
 	if (onEmptyConfig) {
-		const rp = resolveFile(doc).relativePath
-		if (rp) {
-			onEmptyConfig(rp)
+		const { relativePath } = resolveFile(doc)
+		if (relativePath) {
+			onEmptyConfig(relativePath)
 		}
 	}
 	return {}
@@ -51,14 +73,6 @@ export async function applyTextEditorOptions(
 		return
 	}
 
-	const workspaceConfig = workspace.getConfiguration('editor', editor?.document)
-	if (
-		workspaceConfig.get<number | string>('indentSize') === 'tabSize' &&
-		typeof newOptions.indentSize === 'undefined' &&
-		typeof newOptions.tabSize === 'number'
-	) {
-		newOptions.indentSize = editor.options.indentSize
-	}
 	editor.options = newOptions
 
 	if (onSuccess) {
@@ -86,6 +100,7 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 	 */
 	indentSize?: number | string
 } {
+	commands.executeCommand('editor.action.detectIndentation')
 	const workspaceConfig = workspace.getConfiguration('editor', doc)
 	const detectIndentation = workspaceConfig.get<boolean>('detectIndentation')
 
@@ -109,9 +124,7 @@ export async function resolveCoreConfig(
 	doc: TextDocument,
 	{
 		onBeforeResolve,
-	}: {
-		onBeforeResolve?: (relativePath: string) => void
-	} = {},
+	}: { onBeforeResolve?: (relativePath: string) => void } = {},
 ): Promise<ResolvedCoreConfig> {
 	const { fileName, relativePath } = resolveFile(doc)
 	if (!fileName) {
@@ -156,37 +169,27 @@ export function resolveFile(doc: TextDocument): {
  */
 export function fromEditorConfig(
 	config: editorconfig.KnownProps = {},
-	defaults: TextEditorOptions = pickWorkspaceDefaults(),
 ): TextEditorOptions {
-	const resolved: TextEditorOptions = {
-		tabSize:
-			(config.indent_style === 'tab'
-				? (config.tab_width ?? config.indent_size)
-				: config.tab_width) ?? defaults.tabSize,
-		indentSize:
-			(config.indent_style === 'tab'
-				? (config.indent_size ?? 'tabSize')
-				: config.indent_size) ?? defaults.indentSize,
-	}
-	if (resolved.tabSize === 'tab') {
-		resolved.tabSize = config.tab_width
-	}
-	if (resolved.indentSize === 'tab') {
+	const resolved: TextEditorOptions = {}
+
+	if (Number.isInteger(config.indent_size)) {
+		resolved.indentSize = config.indent_size
+	} else if (config.indent_size === 'tab') {
 		resolved.indentSize = 'tabSize'
 	}
-	if (
-		config.indent_style === 'tab' ||
-		config.indent_size === 'tab' ||
-		config.indent_style === 'space'
-	) {
-		resolved.insertSpaces = config.indent_style === 'space'
+
+	if (Number.isInteger(config.tab_width)) {
+		resolved.tabSize = config.tab_width
+	} else if (Number.isInteger(config.indent_size)) {
+		resolved.tabSize = config.indent_size
 	}
-	if (resolved.tabSize === undefined || resolved.tabSize === 'unset') {
-		delete resolved.tabSize
+
+	if (config.indent_style === 'tab') {
+		resolved.insertSpaces = false
+	} else if (config.indent_style === 'space') {
+		resolved.insertSpaces = true
 	}
-	if (resolved.indentSize === undefined || resolved.indentSize === 'unset') {
-		delete resolved.indentSize
-	}
+
 	return resolved
 }
 
