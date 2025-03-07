@@ -19,6 +19,7 @@ suite('EditorConfig extension', () => {
 				expected: {
 					insertSpaces: false,
 					tabSize: 5,
+					indentSize: 5,
 				},
 			},
 			{
@@ -33,6 +34,7 @@ suite('EditorConfig extension', () => {
 				expected: {
 					insertSpaces: false,
 					tabSize: 5,
+					indentSize: 'tabSize',
 				},
 			},
 			{
@@ -46,7 +48,8 @@ suite('EditorConfig extension', () => {
 				},
 				expected: {
 					insertSpaces: true,
-					tabSize: 5,
+					tabSize: 4,
+					indentSize: 5,
 				},
 			},
 			{
@@ -58,7 +61,8 @@ suite('EditorConfig extension', () => {
 					tabSize: 4,
 				},
 				expected: {
-					tabSize: 5,
+					tabSize: 4,
+					indentSize: 5,
 				},
 			},
 			{
@@ -82,7 +86,8 @@ suite('EditorConfig extension', () => {
 					tabSize: 4,
 				},
 				expected: {
-					tabSize: 5,
+					tabSize: 4,
+					indentSize: 5,
 				},
 			},
 			{
@@ -135,6 +140,7 @@ suite('EditorConfig extension', () => {
 				expected: {
 					insertSpaces: false,
 					tabSize: 3,
+					indentSize: 'tabSize',
 				},
 			},
 			{
@@ -166,7 +172,8 @@ suite('EditorConfig extension', () => {
 				defaults: {},
 				expected: {
 					insertSpaces: true,
-					tabSize: 2,
+					tabSize: 4,
+					indentSize: 2,
 				},
 			},
 		].forEach(scenario => {
