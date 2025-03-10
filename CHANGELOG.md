@@ -1,3 +1,8 @@
+## 0.17.2
+
+- **Fix:** allow empty values in .editorconfig
+- **Fix:** use the `insertFinalNewLine` command to insert a final newline, fixes selection change
+
 ## 0.17.1
 
 - **Fix:** The cursor position doesn't unexpectedly change when typing fast/whitespace render mode chages/using `INSERT` mode in vscodevim
