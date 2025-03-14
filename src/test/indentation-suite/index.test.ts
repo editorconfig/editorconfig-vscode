@@ -223,7 +223,7 @@ suite('indentation settings', function () {
 				.join('\n')}`
 			await utils.createFile(editorconfig, editorconfigPath)
 
-			await wait(100)
+			await wait(300)
 			await commands.executeCommand('workbench.action.files.newUntitledFile')
 
 			const { activeTextEditor } = window
