@@ -33,6 +33,17 @@ async function main() {
 			extensionTestsPath: untitledExtensionTestsPath,
 			launchArgs: [untitledWorkspace, '--disable-extensions'],
 		})
+
+		const indentationExtensionTestsPath = path.resolve(
+			__dirname,
+			'./indentation-suite/index',
+		)
+		const indentationWorkspace = path.resolve(__dirname, './indentation-suite')
+		await runTests({
+			extensionDevelopmentPath,
+			extensionTestsPath: indentationExtensionTestsPath,
+			launchArgs: [indentationWorkspace],
+		})
 	} catch {
 		console.error('Failed to run tests')
 		process.exit(1)
