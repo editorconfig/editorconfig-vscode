@@ -112,12 +112,16 @@
     "editorconfig": "^2.0.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.17.19",
     "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.2",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^10.0.2",
     "eslint-config-xo": "^0.45.0",
@@ -126,8 +130,8 @@
     "mocha": "^11.1.0",
     "prettier": "^3.5.2 ",
     "rimraf": "^6.0.1",
+    "semantic-release": "^24.2.3",
     "typescript": "~5.7.3",
-    "@vscode/vsce": "^3.2.2",
     "vscode-test-utils": "^1.0.0"
   },
   "scripts": {
