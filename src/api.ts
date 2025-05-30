@@ -1,5 +1,12 @@
 import * as editorconfig from 'editorconfig'
-import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
+import {
+	TextDocument,
+	TextEditorOptions,
+	Uri,
+	window,
+	workspace,
+	commands,
+} from 'vscode'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -15,16 +22,15 @@ export async function resolveTextEditorOptions(
 		onEmptyConfig?: (relativePath: string) => void
 	} = {},
 ) {
-	const editorconfigSettings = await resolveCoreConfig(doc, {
-		onBeforeResolve,
-	})
-	if (editorconfigSettings) {
-		return fromEditorConfig(editorconfigSettings, pickWorkspaceDefaults(doc))
+	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve })
+	if (coreConfig) {
+		const defaults = pickWorkspaceDefaults(doc)
+		return fromEditorConfig(coreConfig, defaults)
 	}
 	if (onEmptyConfig) {
-		const rp = resolveFile(doc).relativePath
-		if (rp) {
-			onEmptyConfig(rp)
+		const { relativePath } = resolveFile(doc)
+		if (relativePath) {
+			onEmptyConfig(relativePath)
 		}
 	}
 	return {}
@@ -72,7 +78,13 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 	 * this property value will be `undefined`.
 	 */
 	insertSpaces?: boolean
+	/**
+	 * The number of spaces used for indentation or `undefined` if
+	 * `editor.detectIndentation` is on.
+	 */
+	indentSize?: number | string
 } {
+	commands.executeCommand('editor.action.detectIndentation')
 	const workspaceConfig = workspace.getConfiguration('editor', doc)
 	const detectIndentation = workspaceConfig.get<boolean>('detectIndentation')
 
@@ -80,6 +92,7 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 		? {}
 		: {
 				tabSize: workspaceConfig.get<number>('tabSize'),
+				indentSize: workspaceConfig.get<number | string>('indentSize'),
 				insertSpaces: workspaceConfig.get<boolean>('insertSpaces'),
 			}
 }
@@ -95,9 +108,7 @@ export async function resolveCoreConfig(
 	doc: TextDocument,
 	{
 		onBeforeResolve,
-	}: {
-		onBeforeResolve?: (relativePath: string) => void
-	} = {},
+	}: { onBeforeResolve?: (relativePath: string) => void } = {},
 ): Promise<ResolvedCoreConfig> {
 	const { fileName, relativePath } = resolveFile(doc)
 	if (!fileName) {
@@ -107,9 +118,6 @@ export async function resolveCoreConfig(
 		onBeforeResolve?.(relativePath)
 	}
 	const config = await editorconfig.parse(fileName)
-	if (config.indent_size === 'tab') {
-		config.indent_size = config.tab_width
-	}
 	return config as ResolvedCoreConfig
 }
 
@@ -144,28 +152,39 @@ export function fromEditorConfig(
 	config: editorconfig.KnownProps = {},
 	defaults: TextEditorOptions = pickWorkspaceDefaults(),
 ): TextEditorOptions {
-	const resolved: TextEditorOptions = {
-		tabSize:
-			config.indent_style === 'tab'
-				? (config.tab_width ?? config.indent_size)
-				: (config.indent_size ?? config.tab_width),
+	const resolved: TextEditorOptions = {}
+
+	if (Number.isInteger(config.indent_size)) {
+		resolved.indentSize = config.indent_size
+	} else if (config.indent_size === 'tab') {
+		resolved.indentSize = 'tabSize'
 	}
-	if (resolved.tabSize === 'tab') {
+
+	if (Number.isInteger(config.tab_width)) {
 		resolved.tabSize = config.tab_width
+	} else if (Number.isInteger(config.indent_size)) {
+		resolved.tabSize = config.indent_size
 	}
-	return {
-		...(config.indent_style === 'tab' ||
-		config.indent_size === 'tab' ||
-		config.indent_style === 'space'
-			? {
-					insertSpaces: config.indent_style === 'space',
-				}
-			: {}),
-		tabSize:
-			resolved.tabSize && Number(resolved.tabSize) >= 0
-				? resolved.tabSize
-				: defaults.tabSize,
+
+	if (config.indent_style === 'tab') {
+		resolved.insertSpaces = false
+	} else if (config.indent_style === 'space') {
+		resolved.insertSpaces = true
 	}
+
+	const combined = { ...defaults, ...resolved }
+
+	// decouple tabSize from indentSize when possible
+	if (
+		!Number.isInteger(config.tab_width) &&
+		!(combined.insertSpaces && combined.indentSize === 'tabSize') &&
+		!(config.indent_style === 'tab' && Number.isInteger(config.indent_size)) &&
+		Number.isInteger(defaults.tabSize)
+	) {
+		combined.tabSize = defaults.tabSize
+	}
+
+	return combined
 }
 
 /**
