@@ -134,9 +134,6 @@ export async function resolveCoreConfig(
 		onBeforeResolve?.(relativePath)
 	}
 	const config = await editorconfig.parse(fileName)
-	if (config.indent_size === 'tab') {
-		config.indent_size = config.tab_width
-	}
 	return config as ResolvedCoreConfig
 }
 
