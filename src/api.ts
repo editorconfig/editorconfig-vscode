@@ -25,23 +25,7 @@ export async function resolveTextEditorOptions(
 	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve })
 	if (coreConfig) {
 		const defaults = pickWorkspaceDefaults(doc)
-		const converted = fromEditorConfig(coreConfig)
-		const combined = { ...defaults, ...converted }
-
-		// decouple tabSize from indentSize when possible
-		if (
-			!Number.isInteger(coreConfig.tab_width) &&
-			!(combined.insertSpaces && combined.indentSize === 'tabSize') &&
-			!(
-				coreConfig.indent_style === 'tab' &&
-				Number.isInteger(coreConfig.indent_size)
-			) &&
-			Number.isInteger(defaults.tabSize)
-		) {
-			combined.tabSize = defaults.tabSize
-		}
-
-		return combined
+		return fromEditorConfig(coreConfig, defaults)
 	}
 	if (onEmptyConfig) {
 		const { relativePath } = resolveFile(doc)
@@ -166,6 +150,7 @@ export function resolveFile(doc: TextDocument): {
  */
 export function fromEditorConfig(
 	config: editorconfig.KnownProps = {},
+	defaults: TextEditorOptions = pickWorkspaceDefaults(),
 ): TextEditorOptions {
 	const resolved: TextEditorOptions = {}
 
@@ -187,7 +172,19 @@ export function fromEditorConfig(
 		resolved.insertSpaces = true
 	}
 
-	return resolved
+	const combined = { ...defaults, ...resolved }
+
+	// decouple tabSize from indentSize when possible
+	if (
+		!Number.isInteger(config.tab_width) &&
+		!(combined.insertSpaces && combined.indentSize === 'tabSize') &&
+		!(config.indent_style === 'tab' && Number.isInteger(config.indent_size)) &&
+		Number.isInteger(defaults.tabSize)
+	) {
+		combined.tabSize = defaults.tabSize
+	}
+
+	return combined
 }
 
 /**
