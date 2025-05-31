@@ -1,3 +1,8 @@
+
+## 0.17.3
+
+- **New:** allow separate tabSize and indentSize (by @yshui)
+
 ## 0.17.2
 
 - **Fix:** allow empty values in .editorconfig
