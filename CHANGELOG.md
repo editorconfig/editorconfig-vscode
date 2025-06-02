@@ -1,3 +1,6 @@
+## 0.17.4
+
+- **Fix:** indentation shifting on focus
 
 ## 0.17.3
 
