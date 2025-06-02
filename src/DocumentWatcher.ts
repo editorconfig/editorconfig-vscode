@@ -8,19 +8,31 @@ import {
 	window,
 	workspace,
 } from 'vscode'
+import { KnownProps } from 'editorconfig'
+
 import {
 	InsertFinalNewline,
 	PreSaveTransformation,
 	SetEndOfLine,
 	TrimTrailingWhitespace,
 } from './transformations'
-
 import {
 	applyTextEditorOptions,
 	resolveCoreConfig,
 	resolveFile,
 	resolveTextEditorOptions,
 } from './api'
+
+type EncodingMap = Record<
+	NonNullable<KnownProps['charset']>,
+	TextDocument['encoding']
+>
+const encodingMap = {
+	'utf-8': 'utf8',
+	'utf-8-bom': 'utf8bom,',
+	'utf-16le': 'utf16le',
+	'utf-16be': 'utf16be',
+} as const satisfies EncodingMap
 
 export default class DocumentWatcher {
 	private disposable: Disposable
@@ -65,6 +77,8 @@ export default class DocumentWatcher {
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
+				// in case document was dirty
+				this.handleDocumentEncoding(doc)
 			}),
 		)
 
@@ -76,6 +90,10 @@ export default class DocumentWatcher {
 				)
 				e.waitUntil(transformations)
 			}),
+		)
+
+		subscriptions.push(
+			workspace.onDidOpenTextDocument(this.handleDocumentEncoding),
 		)
 
 		this.disposable = Disposable.from.apply(this, subscriptions)
@@ -156,6 +174,28 @@ export default class DocumentWatcher {
 				onNoActiveTextEditor: this.onNoActiveTextEditor,
 				onSuccess: this.onSuccess,
 			})
+			this.handleDocumentEncoding(editor.document)
+		}
+	}
+
+	private async handleDocumentEncoding(document: TextDocument) {
+		const editorconfigSettings = await resolveCoreConfig(document, {
+			onBeforeResolve: this.onBeforeResolve,
+		})
+
+		const { charset } = editorconfigSettings
+		this.log(`${document.fileName}: charset`, charset ?? 'not set')
+
+		if (charset && charset in encodingMap) {
+			const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
+			if (document.encoding !== targetEncoding && !document.isDirty) {
+				this.log(
+					`${document.fileName}: Changing encoding to ${targetEncoding}.`,
+				)
+				await workspace.openTextDocument(document.uri, {
+					encoding: targetEncoding,
+				})
+			}
 		}
 	}
 }
