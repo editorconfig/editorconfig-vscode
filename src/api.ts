@@ -1,12 +1,5 @@
 import * as editorconfig from 'editorconfig'
-import {
-	TextDocument,
-	TextEditorOptions,
-	Uri,
-	window,
-	workspace,
-	commands,
-} from 'vscode'
+import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -25,7 +18,9 @@ export async function resolveTextEditorOptions(
 	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve })
 	if (coreConfig) {
 		const defaults = pickWorkspaceDefaults(doc)
-		return fromEditorConfig(coreConfig, defaults)
+		const { activeTextEditor: editor } = window
+		const current = editor?.document === doc ? editor.options : undefined
+		return fromEditorConfig(coreConfig, defaults, current)
 	}
 	if (onEmptyConfig) {
 		const { relativePath } = resolveFile(doc)
@@ -84,7 +79,6 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 	 */
 	indentSize?: number | string
 } {
-	commands.executeCommand('editor.action.detectIndentation')
 	const workspaceConfig = workspace.getConfiguration('editor', doc)
 	const detectIndentation = workspaceConfig.get<boolean>('detectIndentation')
 
@@ -151,6 +145,7 @@ export function resolveFile(doc: TextDocument): {
 export function fromEditorConfig(
 	config: editorconfig.KnownProps = {},
 	defaults: TextEditorOptions = pickWorkspaceDefaults(),
+	current?: TextEditorOptions,
 ): TextEditorOptions {
 	const resolved: TextEditorOptions = {}
 
@@ -172,7 +167,7 @@ export function fromEditorConfig(
 		resolved.insertSpaces = true
 	}
 
-	const combined = { ...defaults, ...resolved }
+	const combined = { ...current, ...defaults, ...resolved }
 
 	// decouple tabSize from indentSize when possible
 	if (
