@@ -184,13 +184,13 @@ export default class DocumentWatcher {
 		})
 
 		const { charset } = editorconfigSettings
-		this.log(`${document.fileName}: charset`, charset ?? 'not set')
+		this.log(`${document.fileName}: target charset is`, charset ?? 'not set')
 
 		if (charset && charset in encodingMap) {
 			const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
 			if (document.encoding !== targetEncoding && !document.isDirty) {
 				this.log(
-					`${document.fileName}: Changing encoding to ${targetEncoding}.`,
+					`${document.fileName}: Changing encoding from ${document.encoding} to ${targetEncoding}.`,
 				)
 				await workspace.openTextDocument(document.uri, {
 					encoding: targetEncoding,
