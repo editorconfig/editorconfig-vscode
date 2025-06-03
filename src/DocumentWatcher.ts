@@ -29,7 +29,7 @@ type EncodingMap = Record<
 >
 const encodingMap = {
 	'utf-8': 'utf8',
-	'utf-8-bom': 'utf8bom,',
+	'utf-8-bom': 'utf8bom',
 	'utf-16le': 'utf16le',
 	'utf-16be': 'utf16be',
 } as const satisfies EncodingMap
