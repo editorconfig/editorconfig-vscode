@@ -23,10 +23,8 @@ import {
 	resolveTextEditorOptions,
 } from './api'
 
-type EncodingMap = Record<
-	NonNullable<KnownProps['charset']>,
-	TextDocument['encoding']
->
+type Charset = Exclude<KnownProps['charset'], undefined | 'unset'>
+type EncodingMap = Record<Charset, TextDocument['encoding']>
 const encodingMap = {
 	'utf-8': 'utf8',
 	'utf-8-bom': 'utf8bom',
