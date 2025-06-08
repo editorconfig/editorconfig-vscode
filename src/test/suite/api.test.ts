@@ -181,6 +181,21 @@ suite('EditorConfig extension', () => {
 					indentSize: 2,
 				},
 			},
+			{
+				config: {
+					indent_style: 'tab',
+					indent_size: 8,
+					tab_width: 'unset',
+				},
+				defaults: {
+					tabSize: 2,
+				},
+				expected: {
+					insertSpaces: false,
+					indentSize: 8,
+					tabSize: 2,
+				},
+			},
 		].forEach(scenario => {
 			assert.deepStrictEqual(
 				api.fromEditorConfig(scenario.config as KnownProps, scenario.defaults),
