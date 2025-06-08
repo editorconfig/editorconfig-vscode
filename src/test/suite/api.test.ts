@@ -1,12 +1,17 @@
 import * as assert from 'assert'
 import { KnownProps } from 'editorconfig'
+import { TextEditorOptions } from 'vscode'
 
 import * as api from '../../api'
 
 suite('EditorConfig extension', () => {
 	// Defines a Mocha unit test
 	test('api.fromEditorConfig', () => {
-		;[
+		const scenarios: {
+			config: KnownProps
+			defaults: TextEditorOptions
+			expected: TextEditorOptions
+		}[] = [
 			{
 				config: {
 					indent_style: 'tab',
@@ -196,16 +201,20 @@ suite('EditorConfig extension', () => {
 					tabSize: 2,
 				},
 			},
-		].forEach(scenario => {
+		]
+		scenarios.forEach(scenario => {
 			assert.deepStrictEqual(
-				api.fromEditorConfig(scenario.config as KnownProps, scenario.defaults),
+				api.fromEditorConfig(scenario.config, scenario.defaults),
 				scenario.expected,
 			)
 		})
 	})
 
 	test('api.toEditorConfig', () => {
-		;[
+		const scenarios: {
+			options: TextEditorOptions
+			expected: KnownProps
+		}[] = [
 			{
 				options: {
 					insertSpaces: true,
@@ -256,7 +265,8 @@ suite('EditorConfig extension', () => {
 					tab_width: 4,
 				},
 			},
-		].forEach(scenario => {
+		]
+		scenarios.forEach(scenario => {
 			assert.deepStrictEqual(
 				api.toEditorConfig(scenario.options),
 				scenario.expected,
