@@ -157,7 +157,10 @@ export function fromEditorConfig(
 
 	if (Number.isInteger(config.tab_width)) {
 		resolved.tabSize = config.tab_width
-	} else if (Number.isInteger(config.indent_size)) {
+	} else if (
+		Number.isInteger(config.indent_size) &&
+		config.tab_width !== 'unset'
+	) {
 		resolved.tabSize = config.indent_size
 	}
 
