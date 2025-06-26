@@ -11,8 +11,7 @@ const readFile = promisify(_readFile)
  * current vscode settings.
  */
 export async function generateEditorConfig(uri: Uri) {
-	const workspaceUri =
-		workspace.workspaceFolders && workspace.workspaceFolders[0].uri
+	const workspaceUri = workspace.workspaceFolders?.[0].uri
 	const currentUri = uri || workspaceUri
 	if (!currentUri) {
 		window.showErrorMessage("Workspace doesn't contain any folders.")
