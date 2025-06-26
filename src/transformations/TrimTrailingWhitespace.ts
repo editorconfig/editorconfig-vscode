@@ -40,7 +40,7 @@ export class TrimTrailingWhitespace extends PreSaveTransformation {
 			return { edits: [] }
 		}
 
-		if (window.activeTextEditor && window.activeTextEditor.document === doc) {
+		if (window.activeTextEditor?.document === doc) {
 			const trimReason =
 				reason !== TextDocumentSaveReason.Manual ? 'auto-save' : null
 			commands.executeCommand('editor.action.trimTrailingWhitespace', {

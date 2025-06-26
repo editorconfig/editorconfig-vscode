@@ -30,7 +30,7 @@ export class InsertFinalNewline extends PreSaveTransformation {
 			return { edits: [] }
 		}
 
-		if (window.activeTextEditor && window.activeTextEditor.document === doc) {
+		if (window.activeTextEditor?.document === doc) {
 			commands.executeCommand('editor.action.insertFinalNewLine')
 			return {
 				edits: [],
