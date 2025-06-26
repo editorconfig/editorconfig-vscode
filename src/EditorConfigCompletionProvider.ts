@@ -111,7 +111,7 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 	}
 
 	public resolveCompletionItem(item: CompletionItem): CompletionItem {
-		// return the item itself because it already constains all the info
+		// return the item itself because it already contains all the info
 		// necessary to display the details
 		return item
 	}
