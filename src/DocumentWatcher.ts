@@ -145,7 +145,7 @@ export default class DocumentWatcher {
 	}
 
 	private async handleTextEditorChange(editor?: TextEditor) {
-		if (editor && editor.document) {
+		if (editor?.document) {
 			const newOptions = await resolveTextEditorOptions(
 				(this.doc = editor.document),
 				{
