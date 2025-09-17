@@ -30,6 +30,7 @@ const encodingMap = {
 	'utf-8-bom': 'utf8bom',
 	'utf-16le': 'utf16le',
 	'utf-16be': 'utf16be',
+	'latin1': 'iso88591',
 } as const satisfies EncodingMap
 
 export default class DocumentWatcher {

@@ -351,6 +351,15 @@ suite('EditorConfig extension', function () {
 			`document encoding is ${document.encoding} instead of utf16be`,
 		)
 	})
+
+	test('charset (latin1)', async () => {
+		const document = await withSetting('charset', 'latin1').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'iso88591',
+			`document encoding is ${document.encoding} instead of latin1`,
+		)
+	})
 })
 
 function withSetting(
