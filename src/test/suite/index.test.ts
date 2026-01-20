@@ -357,7 +357,7 @@ suite('EditorConfig extension', function () {
 		assert.strictEqual(
 			document.encoding,
 			'iso88591',
-			`document encoding is ${document.encoding} instead of latin1`,
+			`document encoding is ${document.encoding} instead of iso88591`,
 		)
 	})
 })
