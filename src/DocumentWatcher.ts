@@ -195,17 +195,18 @@ export default class DocumentWatcher {
 		}
 
 		const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
-		if (document.encoding !== targetEncoding) {
-			if (document.isDirty) {
-				this.log(`${relativePath}: Cannot change encoding, document is dirty`)
-				return
-			}
-			this.log(
-				`${relativePath}: Re-opening with ${targetEncoding} encoding...`,
-			)
-			await workspace.openTextDocument(document.uri, {
-				encoding: targetEncoding,
-			})
+		if (targetEncoding === document.encoding) {
+			return
 		}
+
+		if (document.isDirty) {
+			this.log(`${relativePath}: Cannot change encoding, document is dirty`)
+			return
+		}
+
+		this.log(`${relativePath}: Re-opening with ${targetEncoding} encoding...`)
+		await workspace.openTextDocument(document.uri, {
+			encoding: targetEncoding,
+		})
 	}
 }
