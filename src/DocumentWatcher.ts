@@ -183,7 +183,6 @@ export default class DocumentWatcher {
 			onBeforeResolve: this.onBeforeResolve,
 		})
 
-		const currentEncoding = document.encoding
 		const { charset } = editorconfigSettings
 		this.log(`${relativePath}: Target charset is`, charset ?? 'not set')
 		if (!charset) {
