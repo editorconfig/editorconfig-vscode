@@ -30,7 +30,7 @@ const encodingMap = {
 	'utf-8-bom': 'utf8bom',
 	'utf-16le': 'utf16le',
 	'utf-16be': 'utf16be',
-	'latin1': 'iso88591',
+	latin1: 'iso88591',
 } as const satisfies EncodingMap
 
 export default class DocumentWatcher {
@@ -76,7 +76,7 @@ export default class DocumentWatcher {
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
-				// in case document was dirty
+				// in case document was dirty on open/text editor change
 				this.handleDocumentEncoding(doc)
 			}),
 		)
@@ -178,23 +178,34 @@ export default class DocumentWatcher {
 	}
 
 	private async handleDocumentEncoding(document: TextDocument) {
+		const relativePath = workspace.asRelativePath(document.fileName)
 		const editorconfigSettings = await resolveCoreConfig(document, {
 			onBeforeResolve: this.onBeforeResolve,
 		})
 
+		const currentEncoding = document.encoding
 		const { charset } = editorconfigSettings
-		this.log(`${document.fileName}: target charset is`, charset ?? 'not set')
+		this.log(`${relativePath}: Target charset is`, charset ?? 'not set')
+		if (!charset) {
+			return
+		}
+		if (!(charset in encodingMap)) {
+			this.log(`${relativePath}: Unsupported charset`)
+			return
+		}
 
-		if (charset && charset in encodingMap) {
-			const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
-			if (document.encoding !== targetEncoding && !document.isDirty) {
-				this.log(
-					`${document.fileName}: Changing encoding from ${document.encoding} to ${targetEncoding}.`,
-				)
-				await workspace.openTextDocument(document.uri, {
-					encoding: targetEncoding,
-				})
+		const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
+		if (document.encoding !== targetEncoding) {
+			if (document.isDirty) {
+				this.log(`${relativePath}: Cannot change encoding, document is dirty`)
+				return
 			}
+			this.log(
+				`${relativePath}: Changing encoding from to ${targetEncoding}...`,
+			)
+			await workspace.openTextDocument(document.uri, {
+				encoding: targetEncoding,
+			})
 		}
 	}
 }
