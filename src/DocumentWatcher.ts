@@ -203,7 +203,7 @@ export default class DocumentWatcher {
 			return
 		}
 
-		this.log(`${relativePath}: Re-opening with ${targetEncoding} encoding...`)
+		this.log(`${relativePath}: Re-opening document with ${targetEncoding} encoding...`)
 		await workspace.openTextDocument(document.uri, {
 			encoding: targetEncoding,
 		})
