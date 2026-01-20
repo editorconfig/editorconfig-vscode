@@ -50,7 +50,7 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 		),
 		new Property(
 			'indent_size',
-			['1', '2', '3', '4', '5', '6', '7', '8', 'unset'],
+			['1', '2', '3', '4', '5', '6', '7', '8', 'tab', 'unset'],
 			[
 				'A whole number defining the number of columns used for each',
 				'indentation level and the width of soft tabs (when supported).',
@@ -111,7 +111,7 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 	}
 
 	public resolveCompletionItem(item: CompletionItem): CompletionItem {
-		// return the item itself because it already constains all the info
+		// return the item itself because it already contains all the info
 		// necessary to display the details
 		return item
 	}
