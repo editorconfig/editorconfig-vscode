@@ -1,3 +1,7 @@
+## 0.18.0
+
+- **Feat:** support `charset`
+
 ## 0.17.4
 
 - **Fix:** indentation shifting on focus
