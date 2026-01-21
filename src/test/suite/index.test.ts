@@ -315,6 +315,51 @@ suite('EditorConfig extension', function () {
 			'editor selection end line changed',
 		)
 	})
+
+	test('charset (utf-8)', async () => {
+		const document = await withSetting('charset', 'utf-8').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'utf8',
+			`document encoding is ${document.encoding} instead of utf8`,
+		)
+	})
+
+	test('charset (utf-8-bom)', async () => {
+		const document = await withSetting('charset', 'utf-8-bom').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'utf8bom',
+			`document encoding is ${document.encoding} instead of utf8bom`,
+		)
+	})
+
+	test('charset (utf-16le)', async () => {
+		const document = await withSetting('charset', 'utf-16le').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'utf16le',
+			`document encoding is ${document.encoding} instead of utf16le`,
+		)
+	})
+
+	test('charset (utf-16be)', async () => {
+		const document = await withSetting('charset', 'utf-16be').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'utf16be',
+			`document encoding is ${document.encoding} instead of utf16be`,
+		)
+	})
+
+	test('charset (latin1)', async () => {
+		const document = await withSetting('charset', 'latin1').createDoc()
+		assert.strictEqual(
+			document.encoding,
+			'iso88591',
+			`document encoding is ${document.encoding} instead of iso88591`,
+		)
+	})
 })
 
 function withSetting(
@@ -327,11 +372,13 @@ function withSetting(
 ) {
 	return {
 		async getText() {
-			return (await createDoc(options.contents, options.fileName)).getText()
+			return (
+				await this.createDoc(options.contents, options.fileName)
+			).getText()
 		},
 		saveText(text: string) {
 			return new Promise<string>(async resolve => {
-				const doc = await createDoc(options.contents, options.fileName)
+				const doc = await this.createDoc(options.contents, options.fileName)
 				workspace.onDidChangeTextDocument(doc.save)
 				workspace.onDidSaveTextDocument(savedDoc => {
 					assert.strictEqual(savedDoc.isDirty, false, 'dirty saved doc')
@@ -346,15 +393,15 @@ function withSetting(
 				)
 			})
 		},
-	}
-	async function createDoc(contents = '', name = 'test') {
-		const uri = await utils.createFile(
-			contents,
-			getFixturePath([rule, value, name]),
-		)
-		const doc = await workspace.openTextDocument(uri)
-		await window.showTextDocument(doc)
-		await wait(50) // wait for EditorConfig to apply new settings
-		return doc
+		async createDoc(contents = '', name = 'test') {
+			const uri = await utils.createFile(
+				contents,
+				getFixturePath([rule, value, name]),
+			)
+			const doc = await workspace.openTextDocument(uri)
+			await window.showTextDocument(doc)
+			await wait(50) // wait for EditorConfig to apply new settings
+			return doc
+		},
 	}
 }

@@ -8,19 +8,30 @@ import {
 	window,
 	workspace,
 } from 'vscode'
+import { KnownProps } from 'editorconfig'
+
 import {
 	InsertFinalNewline,
 	PreSaveTransformation,
 	SetEndOfLine,
 	TrimTrailingWhitespace,
 } from './transformations'
-
 import {
 	applyTextEditorOptions,
 	resolveCoreConfig,
 	resolveFile,
 	resolveTextEditorOptions,
 } from './api'
+
+type Charset = Exclude<KnownProps['charset'], undefined | 'unset'>
+type EncodingMap = Record<Charset, TextDocument['encoding']>
+const encodingMap = {
+	'utf-8': 'utf8',
+	'utf-8-bom': 'utf8bom',
+	'utf-16le': 'utf16le',
+	'utf-16be': 'utf16be',
+	latin1: 'iso88591',
+} as const satisfies EncodingMap
 
 export default class DocumentWatcher {
 	private disposable: Disposable
@@ -65,6 +76,8 @@ export default class DocumentWatcher {
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
+				// in case document was dirty on open/text editor change
+				this.handleDocumentEncoding(doc)
 			}),
 		)
 
@@ -76,6 +89,10 @@ export default class DocumentWatcher {
 				)
 				e.waitUntil(transformations)
 			}),
+		)
+
+		subscriptions.push(
+			workspace.onDidOpenTextDocument(this.handleDocumentEncoding),
 		)
 
 		this.disposable = Disposable.from.apply(this, subscriptions)
@@ -156,6 +173,39 @@ export default class DocumentWatcher {
 				onNoActiveTextEditor: this.onNoActiveTextEditor,
 				onSuccess: this.onSuccess,
 			})
+			this.handleDocumentEncoding(editor.document)
 		}
+	}
+
+	private async handleDocumentEncoding(document: TextDocument) {
+		const relativePath = workspace.asRelativePath(document.fileName)
+		const editorconfigSettings = await resolveCoreConfig(document, {
+			onBeforeResolve: this.onBeforeResolve,
+		})
+
+		const { charset } = editorconfigSettings
+		this.log(`${relativePath}: Target charset is`, charset ?? 'not set')
+		if (!charset) {
+			return
+		}
+		if (!(charset in encodingMap)) {
+			this.log(`${relativePath}: Unsupported charset`)
+			return
+		}
+
+		const targetEncoding = encodingMap[charset as keyof typeof encodingMap]
+		if (targetEncoding === document.encoding) {
+			return
+		}
+
+		if (document.isDirty) {
+			this.log(`${relativePath}: Cannot change encoding, document is dirty`)
+			return
+		}
+
+		this.log(`${relativePath}: Re-opening document with ${targetEncoding} encoding...`)
+		await workspace.openTextDocument(document.uri, {
+			encoding: targetEncoding,
+		})
 	}
 }
