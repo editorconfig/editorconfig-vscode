@@ -43,7 +43,7 @@ for more information on the multiple ways of installing VSCode extensions.
 - `end_of_line` (on save)
 - `insert_final_newline` (on save)
 - `trim_trailing_whitespace` (on save)
-- `charset` (on open/after save)
+- `charset`
 
 ## How it works
 
