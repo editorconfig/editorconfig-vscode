@@ -1,6 +1,10 @@
+## 0.18.1
+
+- **Fix:** Don't apply `charset` on document open (it's still applied on active editor change)
+
 ## 0.18.0
 
-- **Feat:** support `charset`
+- **New:** support `charset`
 
 ## 0.17.4
 
