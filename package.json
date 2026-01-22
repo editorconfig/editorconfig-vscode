@@ -3,7 +3,7 @@
   "displayName": "EditorConfig",
   "description": "EditorConfig Support for Visual Studio Code",
   "publisher": "EditorConfig",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "icon": "EditorConfig_icon.png",
   "engines": {
     "vscode": "^1.100.0"
