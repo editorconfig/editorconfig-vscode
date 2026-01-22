@@ -76,7 +76,7 @@ export default class DocumentWatcher {
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
 				}
-				// in case document was dirty on open/text editor change
+				// in case document was dirty on text editor change
 				this.handleDocumentEncoding(doc)
 			}),
 		)
@@ -89,10 +89,6 @@ export default class DocumentWatcher {
 				)
 				e.waitUntil(transformations)
 			}),
-		)
-
-		subscriptions.push(
-			workspace.onDidOpenTextDocument(this.handleDocumentEncoding),
 		)
 
 		this.disposable = Disposable.from.apply(this, subscriptions)
