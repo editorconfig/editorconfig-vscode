@@ -30,7 +30,7 @@
       "patterns": [
         {
           "name": "comment.line.number-sign.editorconfig",
-          "begin": "(\\s*)(#)",
+          "begin": "^(\\s*)(#)",
           "end": "$",
           "beginCaptures": {
             "1": {
@@ -43,7 +43,7 @@
         },
         {
           "name": "comment.line.semicolon.editorconfig",
-          "begin": "(\\s*)(;)",
+          "begin": "^(\\s*)(;)",
           "end": "$",
           "beginCaptures": {
             "1": {
