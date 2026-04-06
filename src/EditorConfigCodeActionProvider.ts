@@ -15,7 +15,7 @@ import {
 	moveInlineCommentToOwnLine,
 } from './inlineComments'
 
-const MOVE_INLINE_COMMENT_TITLE = 'Move inline comment to its own line'
+export const MOVE_INLINE_COMMENT_TITLE = 'Move inline comment to its own line'
 
 export default class EditorConfigCodeActionProvider
 	implements CodeActionProvider
@@ -57,5 +57,3 @@ export default class EditorConfigCodeActionProvider
 function isInlineCommentDiagnostic(diagnostic: Diagnostic) {
 	return diagnostic.code === INLINE_COMMENT_DIAGNOSTIC_CODE
 }
-
-export { MOVE_INLINE_COMMENT_TITLE }
