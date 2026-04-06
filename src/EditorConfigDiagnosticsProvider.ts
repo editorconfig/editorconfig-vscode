@@ -14,6 +14,11 @@ import {
  * followed by required whitespace and then an unquoted `#` or `;`.
  * Lines where `#` or `;` is the first non-whitespace character are proper
  * standalone comments and are excluded before this regex is applied.
+ *
+ * This mirrors the `inlineComment` rule in syntaxes/editorconfig.tmLanguage.json
+ * (`invalid.illegal.inline-comment.editorconfig`). Unfortunately VS Code's
+ * extension API does not expose TextMate token scopes at runtime, so the
+ * detection must be re-implemented here in TypeScript.
  */
 const INLINE_COMMENT_RE = /\S.*[ \t]+([#;].*)$/
 
