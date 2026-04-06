@@ -8,19 +8,11 @@ import {
 	TextDocument,
 	workspace,
 } from 'vscode'
-
-/**
- * Matches an inline comment: any line that contains non-whitespace content
- * followed by required whitespace and then an unquoted `#` or `;`.
- * Lines where `#` or `;` is the first non-whitespace character are proper
- * standalone comments and are excluded before this regex is applied.
- *
- * This mirrors the `inlineComment` rule in syntaxes/editorconfig.tmLanguage.json
- * (`invalid.illegal.inline-comment.editorconfig`). Unfortunately VS Code's
- * extension API does not expose TextMate token scopes at runtime, so the
- * detection must be re-implemented here in TypeScript.
- */
-const INLINE_COMMENT_RE = /\S.*[ \t]+([#;].*)$/
+import {
+	findInlineComment,
+	INLINE_COMMENT_DIAGNOSTIC_CODE,
+	INLINE_COMMENT_DIAGNOSTIC_MESSAGE,
+} from './inlineComments'
 
 export default class EditorConfigDiagnosticsProvider {
 	private collection: DiagnosticCollection
@@ -60,28 +52,22 @@ export default class EditorConfigDiagnosticsProvider {
 
 		for (let i = 0; i < doc.lineCount; i++) {
 			const { text } = doc.lineAt(i)
-
-			// Skip blank lines and proper standalone comment lines
-			const trimmed = text.trimStart()
-			if (
-				trimmed.length === 0 ||
-				trimmed.startsWith('#') ||
-				trimmed.startsWith(';')
-			) {
-				continue
-			}
-
-			const match = INLINE_COMMENT_RE.exec(text)
-			if (match) {
-				const commentStart = text.length - match[1].length
-				const range = new Range(i, commentStart, i, text.length)
-				diagnostics.push(
-					new Diagnostic(
-						range,
-						'Inline comments are not supported in EditorConfig. Move this comment to its own line.',
-						DiagnosticSeverity.Warning,
-					),
+			const inlineComment = findInlineComment(text)
+			if (inlineComment) {
+				const range = new Range(
+					i,
+					inlineComment.commentStart,
+					i,
+					text.length,
 				)
+				const diagnostic = new Diagnostic(
+					range,
+					INLINE_COMMENT_DIAGNOSTIC_MESSAGE,
+					DiagnosticSeverity.Warning,
+				)
+				diagnostic.code = INLINE_COMMENT_DIAGNOSTIC_CODE
+				diagnostic.source = 'editorconfig'
+				diagnostics.push(diagnostic)
 			}
 		}
 

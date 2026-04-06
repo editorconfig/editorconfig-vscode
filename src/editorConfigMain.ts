@@ -1,4 +1,10 @@
-import { commands, DocumentSelector, ExtensionContext, languages } from 'vscode'
+import {
+	CodeActionKind,
+	commands,
+	DocumentSelector,
+	ExtensionContext,
+	languages,
+} from 'vscode'
 import {
 	applyTextEditorOptions,
 	fromEditorConfig,
@@ -6,6 +12,7 @@ import {
 	resolveTextEditorOptions,
 	toEditorConfig,
 } from './api'
+import EditorConfigCodeActionProvider from './EditorConfigCodeActionProvider'
 import { generateEditorConfig } from './commands/generateEditorConfig'
 import DocumentWatcher from './DocumentWatcher'
 import EditorConfigCompletionProvider from './EditorConfigCompletionProvider'
@@ -27,6 +34,13 @@ export function activate(ctx: ExtensionContext) {
 	languages.registerCompletionItemProvider(
 		editorConfigFileSelector,
 		new EditorConfigCompletionProvider(),
+	)
+	languages.registerCodeActionsProvider(
+		{ language: 'editorconfig' },
+		new EditorConfigCodeActionProvider(),
+		{
+			providedCodeActionKinds: [CodeActionKind.QuickFix],
+		},
 	)
 
 	// register an internal command used to automatically display IntelliSense

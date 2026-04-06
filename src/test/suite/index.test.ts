@@ -1,7 +1,15 @@
 import * as assert from 'assert'
 import * as os from 'os'
-import { Position, window, workspace, WorkspaceEdit } from 'vscode'
+import {
+	commands,
+	languages,
+	Position,
+	window,
+	workspace,
+	WorkspaceEdit,
+} from 'vscode'
 import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
+import { MOVE_INLINE_COMMENT_TITLE } from '../../EditorConfigCodeActionProvider'
 
 import * as utils from 'vscode-test-utils'
 
@@ -358,6 +366,47 @@ suite('EditorConfig extension', function () {
 			document.encoding,
 			'iso88591',
 			`document encoding is ${document.encoding} instead of iso88591`,
+		)
+	})
+
+	test('inline comment quick fix moves the comment to its own line', async () => {
+		const doc = await workspace.openTextDocument({
+			language: 'editorconfig',
+			content: 'indent_style = space # required',
+		})
+		await window.showTextDocument(doc)
+		await wait(200)
+
+		const diagnostics = languages.getDiagnostics(doc.uri)
+		assert.strictEqual(diagnostics.length, 1, 'expected one inline comment warning')
+
+		const actions = await commands.executeCommand<any[]>(
+			'vscode.executeCodeActionProvider',
+			doc.uri,
+			diagnostics[0].range,
+		)
+		assert.ok(actions, 'expected code actions')
+
+		const quickFix = actions.find(action => action.title === MOVE_INLINE_COMMENT_TITLE)
+		assert.ok(quickFix, 'expected inline comment quick fix')
+		assert.ok(quickFix.edit, 'expected quick fix edit')
+
+		assert.strictEqual(
+			await workspace.applyEdit(quickFix.edit),
+			true,
+			'editor fails to apply inline comment quick fix',
+		)
+		await wait(50)
+
+		assert.strictEqual(
+			doc.getText(),
+			'indent_style = space\n# required',
+			'inline comment quick fix did not move the comment to a new line',
+		)
+		assert.strictEqual(
+			languages.getDiagnostics(doc.uri).length,
+			0,
+			'inline comment warning should clear after applying the quick fix',
 		)
 	})
 })
