@@ -9,12 +9,14 @@ import {
 import { generateEditorConfig } from './commands/generateEditorConfig'
 import DocumentWatcher from './DocumentWatcher'
 import EditorConfigCompletionProvider from './EditorConfigCompletionProvider'
+import EditorConfigDiagnosticsProvider from './EditorConfigDiagnosticsProvider'
 
 /**
  * Main entry
  */
 export function activate(ctx: ExtensionContext) {
 	ctx.subscriptions.push(new DocumentWatcher())
+	ctx.subscriptions.push(new EditorConfigDiagnosticsProvider())
 
 	// register .editorconfig file completion provider
 	const editorConfigFileSelector: DocumentSelector = {
