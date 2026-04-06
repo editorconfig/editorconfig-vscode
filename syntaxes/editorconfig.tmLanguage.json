@@ -273,6 +273,10 @@
         }
       ]
     },
+    "inlineComment": {
+      "name": "invalid.illegal.inline-comment.editorconfig",
+      "match": "\\s*[#;].*$"
+    },
     "section": {
       "name": "meta.section.editorconfig",
       "begin": "^\\s*(?=\\[.*?\\])",
@@ -286,6 +290,9 @@
         },
         {
           "include": "#rule"
+        },
+        {
+          "include": "#inlineComment"
         }
       ]
     },
@@ -374,6 +381,9 @@
         },
         {
           "include": "#string"
+        },
+        {
+          "include": "#inlineComment"
         }
       ]
     }
