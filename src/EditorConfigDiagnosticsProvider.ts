@@ -11,11 +11,11 @@ import {
 
 /**
  * Matches an inline comment: any line that contains non-whitespace content
- * followed by an unquoted `#` or `;` (with optional preceding whitespace).
+ * followed by required whitespace and then an unquoted `#` or `;`.
  * Lines where `#` or `;` is the first non-whitespace character are proper
  * standalone comments and are excluded before this regex is applied.
  */
-const INLINE_COMMENT_RE = /\S.*?[ \t]*([#;].*)$/
+const INLINE_COMMENT_RE = /\S.*[ \t]+([#;].*)$/
 
 export default class EditorConfigDiagnosticsProvider {
 	private collection: DiagnosticCollection
@@ -43,7 +43,7 @@ export default class EditorConfigDiagnosticsProvider {
 			),
 		)
 
-		this.disposable = Disposable.from.apply(this, subscriptions)
+		this.disposable = Disposable.from(...subscriptions)
 	}
 
 	private analyze(doc: TextDocument) {
