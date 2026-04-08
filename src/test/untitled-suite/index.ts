@@ -1,4 +1,4 @@
-import { globSync } from 'glob'
+import { globSync } from 'tinyglobby'
 import * as Mocha from 'mocha'
 import * as path from 'path'
 

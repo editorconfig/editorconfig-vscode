@@ -121,11 +121,11 @@
     "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-xo": "^0.51.0",
-    "glob": "^11.0.2",
     "globals": "^17.4.0",
     "mocha": "^11.6.0",
     "prettier": "^3.8.1",
     "rimraf": "^6.0.1",
+    "tinyglobby": "^0.2.16",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.58.1",
     "vscode-test-utils": "^1.0.0"
