@@ -1,3 +1,7 @@
+## 0.18.2
+
+- **Fix:** disable inline comments highlighting in .editorconfig files (by @DecimalTurn)
+
 ## 0.18.1
 
 - **Fix:** Don't apply `charset` on document open (it's still applied on active editor change)
