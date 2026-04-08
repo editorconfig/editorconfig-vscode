@@ -1,5 +1,5 @@
-import * as editorconfig from 'editorconfig'
-import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
+import * as editorconfig from "editorconfig";
+import { TextDocument, TextEditorOptions, Uri, window, workspace } from "vscode";
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -11,24 +11,24 @@ export async function resolveTextEditorOptions(
 		onBeforeResolve,
 		onEmptyConfig,
 	}: {
-		onBeforeResolve?: (relativePath: string) => void
-		onEmptyConfig?: (relativePath: string) => void
+		onBeforeResolve?: (relativePath: string) => void;
+		onEmptyConfig?: (relativePath: string) => void;
 	} = {},
 ) {
-	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve })
+	const coreConfig = await resolveCoreConfig(doc, { onBeforeResolve });
 	if (coreConfig) {
-		const defaults = pickWorkspaceDefaults(doc)
-		const { activeTextEditor: editor } = window
-		const current = editor?.document === doc ? editor.options : undefined
-		return fromEditorConfig(coreConfig, defaults, current)
+		const defaults = pickWorkspaceDefaults(doc);
+		const { activeTextEditor: editor } = window;
+		const current = editor?.document === doc ? editor.options : undefined;
+		return fromEditorConfig(coreConfig, defaults, current);
 	}
 	if (onEmptyConfig) {
-		const { relativePath } = resolveFile(doc)
+		const { relativePath } = resolveFile(doc);
 		if (relativePath) {
-			onEmptyConfig(relativePath)
+			onEmptyConfig(relativePath);
 		}
 	}
-	return {}
+	return {};
 }
 
 /**
@@ -40,22 +40,22 @@ export async function applyTextEditorOptions(
 		onNoActiveTextEditor,
 		onSuccess,
 	}: {
-		onNoActiveTextEditor?: () => void
-		onSuccess?: (newOptions: TextEditorOptions) => void
+		onNoActiveTextEditor?: () => void;
+		onSuccess?: (newOptions: TextEditorOptions) => void;
 	} = {},
 ) {
-	const editor = window.activeTextEditor
+	const editor = window.activeTextEditor;
 	if (!editor) {
 		if (onNoActiveTextEditor) {
-			onNoActiveTextEditor()
+			onNoActiveTextEditor();
 		}
-		return
+		return;
 	}
 
-	editor.options = newOptions
+	editor.options = newOptions;
 
 	if (onSuccess) {
-		onSuccess(newOptions)
+		onSuccess(newOptions);
 	}
 }
 
@@ -67,32 +67,32 @@ export function pickWorkspaceDefaults(doc?: TextDocument): {
 	 * The number of spaces a tab is equal to. When `editor.detectIndentation`
 	 * is on, this property value will be `undefined`.
 	 */
-	tabSize?: number
+	tabSize?: number;
 	/**
 	 * Insert spaces when pressing `Tab`. When `editor.detectIndentation` is on,
 	 * this property value will be `undefined`.
 	 */
-	insertSpaces?: boolean
+	insertSpaces?: boolean;
 	/**
 	 * The number of spaces used for indentation or `undefined` if
 	 * `editor.detectIndentation` is on.
 	 */
-	indentSize?: number | string
+	indentSize?: number | string;
 } {
-	const workspaceConfig = workspace.getConfiguration('editor', doc)
-	const detectIndentation = workspaceConfig.get<boolean>('detectIndentation')
+	const workspaceConfig = workspace.getConfiguration("editor", doc);
+	const detectIndentation = workspaceConfig.get<boolean>("detectIndentation");
 
 	return detectIndentation
 		? {}
 		: {
-				tabSize: workspaceConfig.get<number>('tabSize'),
-				indentSize: workspaceConfig.get<number | string>('indentSize'),
-				insertSpaces: workspaceConfig.get<boolean>('insertSpaces'),
-			}
+				tabSize: workspaceConfig.get<number>("tabSize"),
+				indentSize: workspaceConfig.get<number | string>("indentSize"),
+				insertSpaces: workspaceConfig.get<boolean>("insertSpaces"),
+			};
 }
 
 export type ResolvedCoreConfig = editorconfig.KnownProps &
-	Record<string, string | number | boolean>
+	Record<string, string | number | boolean>;
 
 /**
  * Resolves an EditorConfig configuration for the file related to a
@@ -100,42 +100,40 @@ export type ResolvedCoreConfig = editorconfig.KnownProps &
  */
 export async function resolveCoreConfig(
 	doc: TextDocument,
-	{
-		onBeforeResolve,
-	}: { onBeforeResolve?: (relativePath: string) => void } = {},
+	{ onBeforeResolve }: { onBeforeResolve?: (relativePath: string) => void } = {},
 ): Promise<ResolvedCoreConfig> {
-	const { fileName, relativePath } = resolveFile(doc)
+	const { fileName, relativePath } = resolveFile(doc);
 	if (!fileName) {
-		return {}
+		return {};
 	}
 	if (relativePath) {
-		onBeforeResolve?.(relativePath)
+		onBeforeResolve?.(relativePath);
 	}
-	const config = await editorconfig.parse(fileName)
-	return config as ResolvedCoreConfig
+	const config = await editorconfig.parse(fileName);
+	return config as ResolvedCoreConfig;
 }
 
 export function resolveFile(doc: TextDocument): {
-	fileName?: string
-	relativePath?: string
+	fileName?: string;
+	relativePath?: string;
 } {
-	if (doc.languageId === 'Log') {
-		return {}
+	if (doc.languageId === "Log") {
+		return {};
 	}
-	const file = getFile()
+	const file = getFile();
 	return {
 		fileName: file?.fsPath,
 		relativePath: file && workspace.asRelativePath(file, true),
-	}
+	};
 
 	function getFile(): Uri | undefined {
 		if (!doc.isUntitled) {
-			return doc.uri
+			return doc.uri;
 		}
 		if (workspace.workspaceFolders?.[0]) {
-			return Uri.joinPath(workspace.workspaceFolders[0].uri, doc.fileName)
+			return Uri.joinPath(workspace.workspaceFolders[0].uri, doc.fileName);
 		}
-		return undefined
+		return undefined;
 	}
 }
 
@@ -147,72 +145,69 @@ export function fromEditorConfig(
 	defaults: TextEditorOptions = pickWorkspaceDefaults(),
 	current?: TextEditorOptions,
 ): TextEditorOptions {
-	const resolved: TextEditorOptions = {}
+	const resolved: TextEditorOptions = {};
 
 	if (Number.isInteger(config.indent_size)) {
-		resolved.indentSize = config.indent_size
-	} else if (config.indent_size === 'tab') {
-		resolved.indentSize = 'tabSize'
+		resolved.indentSize = config.indent_size;
+	} else if (config.indent_size === "tab") {
+		resolved.indentSize = "tabSize";
 	}
 
 	if (Number.isInteger(config.tab_width)) {
-		resolved.tabSize = config.tab_width
-	} else if (
-		Number.isInteger(config.indent_size) &&
-		config.tab_width !== 'unset'
-	) {
-		resolved.tabSize = config.indent_size
+		resolved.tabSize = config.tab_width;
+	} else if (Number.isInteger(config.indent_size) && config.tab_width !== "unset") {
+		resolved.tabSize = config.indent_size;
 	}
 
-	if (config.indent_style === 'tab') {
-		resolved.insertSpaces = false
-	} else if (config.indent_style === 'space') {
-		resolved.insertSpaces = true
+	if (config.indent_style === "tab") {
+		resolved.insertSpaces = false;
+	} else if (config.indent_style === "space") {
+		resolved.insertSpaces = true;
 	}
 
-	const combined = { ...current, ...defaults, ...resolved }
+	const combined = { ...current, ...defaults, ...resolved };
 
 	// decouple tabSize from indentSize when possible
 	if (
 		!Number.isInteger(config.tab_width) &&
-		!(combined.insertSpaces && combined.indentSize === 'tabSize') &&
-		!(config.indent_style === 'tab' && Number.isInteger(config.indent_size)) &&
+		!(combined.insertSpaces && combined.indentSize === "tabSize") &&
+		!(config.indent_style === "tab" && Number.isInteger(config.indent_size)) &&
 		Number.isInteger(defaults.tabSize)
 	) {
-		combined.tabSize = defaults.tabSize
+		combined.tabSize = defaults.tabSize;
 	}
 
-	return combined
+	return combined;
 }
 
 /**
  * Convert vscode editor options to .editorconfig values
  */
 export function toEditorConfig(options: TextEditorOptions) {
-	const result: editorconfig.KnownProps = {}
+	const result: editorconfig.KnownProps = {};
 
 	switch (options.insertSpaces) {
 		case true:
-			result.indent_style = 'space'
+			result.indent_style = "space";
 			if (options.tabSize) {
-				result.indent_size = resolveTabSize(options.tabSize)
+				result.indent_size = resolveTabSize(options.tabSize);
 			}
-			break
+			break;
 		case false:
-		case 'auto':
-			result.indent_style = 'tab'
+		case "auto":
+			result.indent_style = "tab";
 			if (options.tabSize) {
-				result.tab_width = resolveTabSize(options.tabSize)
+				result.tab_width = resolveTabSize(options.tabSize);
 			}
-			break
+			break;
 	}
 
-	return result
+	return result;
 
 	/**
 	 * Convert vscode tabSize option into numeric value
 	 */
 	function resolveTabSize(tabSize: number | string) {
-		return tabSize === 'auto' ? 4 : parseInt(String(tabSize), 10)
+		return tabSize === "auto" ? 4 : parseInt(String(tabSize), 10);
 	}
 }

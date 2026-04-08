@@ -6,12 +6,13 @@ Please fill-in this template.
 Delete the following condition if it doesn't apply to your case:
 
 If the extension is not picking up the expected configuration for a file:
+
 - [ ] I tried `npm install editorconfig -g` and ran `editorconfig [file-in-question]` and the configuration was what I expected. If not, please file on the [`editorconfig-core-js` issue tracker](https://github.com/editorconfig/editorconfig-core-js/issues).
 
 ## Issue
 
 |             | Visual Studio Code | editorconfig-vscode |
-|-------------|--------------------|---------------------|
+| ----------- | ------------------ | ------------------- |
 | **Version** | `x.x.x`            | `x.x.x`             |
 
 ### Root `.editorconfig` File
@@ -27,7 +28,7 @@ indent_size = 2
 Are there any other relevant `.editorconfig` files in your project? Yes / No
 
 | Visual Studio Code Setting     | Default | User    | Workspace |
-|--------------------------------|---------|---------|-----------|
+| ------------------------------ | ------- | ------- | --------- |
 | `editor.insertSpaces`          | `true`  | `____`  | `____`    |
 | `editor.tabSize`               | `4`     | `_`     | `_`       |
 | `editor.trimAutoWhitespace`    | `true`  | `____`  | `____`    |

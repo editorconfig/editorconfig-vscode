@@ -17,11 +17,7 @@
     "tsconfigRootDir": "."
   },
   "plugins": ["@typescript-eslint"],
-  "extends": [
-    "eslint:recommended",
-    "prettier",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["eslint:recommended", "prettier", "plugin:@typescript-eslint/recommended"],
   "rules": {
     // Possible Errors
     "no-async-promise-executor": "error",
