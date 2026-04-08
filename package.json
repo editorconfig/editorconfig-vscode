@@ -112,22 +112,22 @@
     "editorconfig": "^3.0.2"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.19.0",
     "@types/vscode": "~1.100.0",
-    "@typescript-eslint/eslint-plugin": "^8.34.0",
-    "@typescript-eslint/parser": "^8.34.0",
     "@vscode/test-electron": "^2.5.2",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-config-xo": "^0.45.0",
-    "eslint-plugin-prettier": "^5.4.1",
-    "glob": "^11.0.2",
-    "mocha": "^11.6.0",
-    "prettier": "^3.5.3",
-    "rimraf": "^6.0.1",
-    "typescript": "~5.8.3",
     "@vscode/vsce": "^3.5.0",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-xo": "^0.51.0",
+    "glob": "^11.0.2",
+    "globals": "^17.4.0",
+    "mocha": "^11.6.0",
+    "prettier": "^3.8.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.58.1",
     "vscode-test-utils": "^1.0.0"
   },
   "scripts": {
@@ -135,34 +135,12 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "cp -r src/test/suite/fixtures out/test/suite && cp -r src/test/untitled-suite/fixtures out/test/untitled-suite && cp src/DefaultTemplate.editorconfig out",
+    "format": "prettier --write .",
     "lint": "eslint src/**/*.ts",
     "pretest": "npm run lint && npm run build",
     "watch": "tsc -watch",
     "check-types": "tsc --noEmit",
     "test": "node out/test/runTest.js",
     "vscode:prepublish": "npm run build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "xo",
-      "prettier"
-    ],
-    "env": {
-      "jest": true,
-      "node": true
-    },
-    "rules": {
-      "prettier/prettier": "error"
-    },
-    "plugins": [
-      "prettier"
-    ]
-  },
-  "prettier": {
-    "arrowParens": "avoid",
-    "proseWrap": "always",
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all"
   }
 }
