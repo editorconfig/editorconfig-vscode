@@ -1,20 +1,20 @@
-import * as assert from 'assert'
-import { KnownProps } from 'editorconfig'
-import { TextEditorOptions } from 'vscode'
+import * as assert from "assert";
+import { KnownProps } from "editorconfig";
+import { TextEditorOptions } from "vscode";
 
-import * as api from '../../api'
+import * as api from "../../api";
 
-suite('EditorConfig extension', () => {
+suite("EditorConfig extension", () => {
 	// Defines a Mocha unit test
-	test('api.fromEditorConfig', () => {
+	test("api.fromEditorConfig", () => {
 		const scenarios: {
-			config: KnownProps
-			defaults: TextEditorOptions
-			expected: TextEditorOptions
+			config: KnownProps;
+			defaults: TextEditorOptions;
+			expected: TextEditorOptions;
 		}[] = [
 			{
 				config: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					indent_size: 5,
 				},
 				defaults: {
@@ -29,7 +29,7 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					tab_width: 5,
 				},
 				defaults: {
@@ -43,7 +43,7 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_style: 'space',
+					indent_style: "space",
 					indent_size: 5,
 				},
 				defaults: {
@@ -112,7 +112,7 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_style: 'space',
+					indent_style: "space",
 				},
 				defaults: {
 					insertSpaces: false,
@@ -125,7 +125,7 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_style: 'space',
+					indent_style: "space",
 				},
 				defaults: {
 					insertSpaces: false,
@@ -138,7 +138,7 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_size: 'tab',
+					indent_size: "tab",
 					tab_width: 3,
 				},
 				defaults: {
@@ -148,7 +148,7 @@ suite('EditorConfig extension', () => {
 				expected: {
 					insertSpaces: false,
 					tabSize: 3,
-					indentSize: 'tabSize',
+					indentSize: "tabSize",
 				},
 			},
 			{
@@ -176,7 +176,7 @@ suite('EditorConfig extension', () => {
 			{
 				config: {
 					indent_size: 2,
-					indent_style: 'space',
+					indent_style: "space",
 					tab_width: 4,
 				},
 				defaults: {},
@@ -188,9 +188,9 @@ suite('EditorConfig extension', () => {
 			},
 			{
 				config: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					indent_size: 8,
-					tab_width: 'unset',
+					tab_width: "unset",
 				},
 				defaults: {
 					tabSize: 2,
@@ -201,19 +201,19 @@ suite('EditorConfig extension', () => {
 					tabSize: 2,
 				},
 			},
-		]
-		scenarios.forEach(scenario => {
+		];
+		scenarios.forEach((scenario) => {
 			assert.deepStrictEqual(
 				api.fromEditorConfig(scenario.config, scenario.defaults),
 				scenario.expected,
-			)
-		})
-	})
+			);
+		});
+	});
 
-	test('api.toEditorConfig', () => {
+	test("api.toEditorConfig", () => {
 		const scenarios: {
-			options: TextEditorOptions
-			expected: KnownProps
+			options: TextEditorOptions;
+			expected: KnownProps;
 		}[] = [
 			{
 				options: {
@@ -221,7 +221,7 @@ suite('EditorConfig extension', () => {
 					tabSize: 5,
 				},
 				expected: {
-					indent_style: 'space',
+					indent_style: "space",
 					indent_size: 5,
 				},
 			},
@@ -231,46 +231,43 @@ suite('EditorConfig extension', () => {
 					tabSize: 6,
 				},
 				expected: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					tab_width: 6,
 				},
 			},
 			{
 				options: {
 					insertSpaces: false,
-					tabSize: 'auto',
+					tabSize: "auto",
 				},
 				expected: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					tab_width: 4,
 				},
 			},
 			{
 				options: {
-					insertSpaces: 'auto',
+					insertSpaces: "auto",
 					tabSize: 7,
 				},
 				expected: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					tab_width: 7,
 				},
 			},
 			{
 				options: {
-					insertSpaces: 'auto',
-					tabSize: 'auto',
+					insertSpaces: "auto",
+					tabSize: "auto",
 				},
 				expected: {
-					indent_style: 'tab',
+					indent_style: "tab",
 					tab_width: 4,
 				},
 			},
-		]
-		scenarios.forEach(scenario => {
-			assert.deepStrictEqual(
-				api.toEditorConfig(scenario.options),
-				scenario.expected,
-			)
-		})
-	})
-})
+		];
+		scenarios.forEach((scenario) => {
+			assert.deepStrictEqual(api.toEditorConfig(scenario.options), scenario.expected);
+		});
+	});
+});

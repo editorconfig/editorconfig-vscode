@@ -1,61 +1,48 @@
-import { KnownProps } from 'editorconfig'
-import {
-	commands,
-	Position,
-	TextDocument,
-	TextEdit,
-	window,
-} from 'vscode'
+import { KnownProps } from "editorconfig";
+import { commands, Position, TextDocument, TextEdit, window } from "vscode";
 
-import { PreSaveTransformation } from './PreSaveTransformation'
+import { PreSaveTransformation } from "./PreSaveTransformation";
 
 const lineEndings = {
-	CR: '\r',
-	CRLF: '\r\n',
-	LF: '\n',
-}
+	CR: "\r",
+	CRLF: "\r\n",
+	LF: "\n",
+};
 
 export class InsertFinalNewline extends PreSaveTransformation {
-	private lineEndings = lineEndings
+	private lineEndings = lineEndings;
 
 	public transform(editorconfigProperties: KnownProps, doc: TextDocument) {
-		const lineCount = doc.lineCount
-		const lastLine = doc.lineAt(lineCount - 1)
+		const lineCount = doc.lineCount;
+		const lastLine = doc.lineAt(lineCount - 1);
 
 		if (
 			shouldIgnoreSetting(editorconfigProperties.insert_final_newline) ||
 			lineCount === 0 ||
 			lastLine.isEmptyOrWhitespace
 		) {
-			return { edits: [] }
+			return { edits: [] };
 		}
 
 		if (window.activeTextEditor?.document === doc) {
-			commands.executeCommand('editor.action.insertFinalNewLine')
+			commands.executeCommand("editor.action.insertFinalNewLine");
 			return {
 				edits: [],
-				message: 'editor.action.insertFinalNewLine',
-			}
+				message: "editor.action.insertFinalNewLine",
+			};
 		}
 
-		const position = new Position(lastLine.lineNumber, lastLine.text.length)
+		const position = new Position(lastLine.lineNumber, lastLine.text.length);
 
-		const eol = (editorconfigProperties.end_of_line ?? 'lf').toUpperCase()
+		const eol = (editorconfigProperties.end_of_line ?? "lf").toUpperCase();
 
 		return {
-			edits: [
-				TextEdit.insert(
-					position,
-					this.lineEndings[eol as keyof typeof lineEndings],
-				),
-			],
+			edits: [TextEdit.insert(position, this.lineEndings[eol as keyof typeof lineEndings])],
 			message: `insertFinalNewline(${eol})`,
-		}
+		};
 
-		function shouldIgnoreSetting(
-			value?: typeof editorconfigProperties.insert_final_newline,
-		) {
-			return !value || value === 'unset'
+		function shouldIgnoreSetting(value?: typeof editorconfigProperties.insert_final_newline) {
+			return !value || value === "unset";
 		}
 	}
 }

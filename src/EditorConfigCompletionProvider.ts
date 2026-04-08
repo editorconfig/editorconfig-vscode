@@ -5,158 +5,143 @@ import {
 	CompletionItemProvider,
 	Position,
 	TextDocument,
-} from 'vscode'
+} from "vscode";
 
 class Property {
-	public name: string
-	public values: string[]
-	public description: string
+	public name: string;
+	public values: string[];
+	public description: string;
 
 	public constructor(name: string, values: string[], description: string) {
-		this.name = name
-		this.values = values
-		this.description = description
+		this.name = name;
+		this.values = values;
+		this.description = description;
 	}
 }
 
 class EditorConfigCompletionProvider implements CompletionItemProvider {
 	private readonly properties: Property[] = [
 		new Property(
-			'root',
-			['true', 'false', 'unset'],
+			"root",
+			["true", "false", "unset"],
 			[
-				'Special property that should be specified at the top of the file',
-				'outside of any sections. Set to true to stop .editorconfig files',
-				'search on current file.',
-			].join(' '),
+				"Special property that should be specified at the top of the file",
+				"outside of any sections. Set to true to stop .editorconfig files",
+				"search on current file.",
+			].join(" "),
 		),
 		new Property(
-			'charset',
-			['utf-8', 'utf-8-bom', 'utf-16be', 'utf-16le', 'latin1', 'unset'],
+			"charset",
+			["utf-8", "utf-8-bom", "utf-16be", "utf-16le", "latin1", "unset"],
 			[
-				'Set to latin1, utf-8, utf-8-bom, utf-16be or utf-16le to control',
-				'the character set. Use of utf-8-bom is discouraged.',
-			].join(' '),
+				"Set to latin1, utf-8, utf-8-bom, utf-16be or utf-16le to control",
+				"the character set. Use of utf-8-bom is discouraged.",
+			].join(" "),
 		),
 		new Property(
-			'end_of_line',
-			['lf', 'cr', 'crlf', 'unset'],
-			'Set to lf, cr, or crlf to control how line breaks are represented.',
+			"end_of_line",
+			["lf", "cr", "crlf", "unset"],
+			"Set to lf, cr, or crlf to control how line breaks are represented.",
 		),
 		new Property(
-			'indent_style',
-			['tab', 'space', 'unset'],
-			'Set to tab or space to use hard tabs or soft tabs respectively.',
+			"indent_style",
+			["tab", "space", "unset"],
+			"Set to tab or space to use hard tabs or soft tabs respectively.",
 		),
 		new Property(
-			'indent_size',
-			['1', '2', '3', '4', '5', '6', '7', '8', 'tab', 'unset'],
+			"indent_size",
+			["1", "2", "3", "4", "5", "6", "7", "8", "tab", "unset"],
 			[
-				'A whole number defining the number of columns used for each',
-				'indentation level and the width of soft tabs (when supported).',
-				'When set to tab, the value of tab_width (if specified) will be',
-				'used.',
-			].join(' '),
+				"A whole number defining the number of columns used for each",
+				"indentation level and the width of soft tabs (when supported).",
+				"When set to tab, the value of tab_width (if specified) will be",
+				"used.",
+			].join(" "),
 		),
 		new Property(
-			'insert_final_newline',
-			['true', 'false', 'unset'],
+			"insert_final_newline",
+			["true", "false", "unset"],
 			[
-				'Set to true to ensure file ends with a newline when saving and',
+				"Set to true to ensure file ends with a newline when saving and",
 				"false to ensure it doesn't.",
-			].join(' '),
+			].join(" "),
 		),
 		new Property(
-			'tab_width',
-			['1', '2', '3', '4', '5', '6', '7', '8', 'unset'],
+			"tab_width",
+			["1", "2", "3", "4", "5", "6", "7", "8", "unset"],
 			[
-				'A whole number defining the number of columns used to represent a',
-				'tab character. This defaults to the value of indent_size and',
+				"A whole number defining the number of columns used to represent a",
+				"tab character. This defaults to the value of indent_size and",
 				"doesn't usually need to be specified.",
-			].join(' '),
+			].join(" "),
 		),
 		new Property(
-			'trim_trailing_whitespace',
-			['true', 'false', 'unset'],
+			"trim_trailing_whitespace",
+			["true", "false", "unset"],
 			[
-				'Set to true to remove any whitespace characters preceding newline',
+				"Set to true to remove any whitespace characters preceding newline",
 				"characters and false to ensure it doesn't.",
-			].join(' '),
+			].join(" "),
 		),
-	]
+	];
 
 	// =========================================================================
 	// PUBLIC INTERFACE
 	// =========================================================================
-	public provideCompletionItems(
-		document: TextDocument,
-		position: Position,
-	): CompletionItem[] {
+	public provideCompletionItems(document: TextDocument, position: Position): CompletionItem[] {
 		// get text where code completion was activated
 		// used to determine if autocompleting a key or a value
-		const textOfEntireLine = document.getText(
-			document.lineAt(position.line).range,
-		)
-		const textOfLineUpToCursor = textOfEntireLine.substring(
-			0,
-			position.character,
-		)
+		const textOfEntireLine = document.getText(document.lineAt(position.line).range);
+		const textOfLineUpToCursor = textOfEntireLine.substring(0, position.character);
 
 		// conditionally generate autocomplete for property names or values
 		if (this.hasPropertyKey(textOfLineUpToCursor)) {
-			return this.autoCompletePropertyValues(textOfLineUpToCursor)
+			return this.autoCompletePropertyValues(textOfLineUpToCursor);
 		} else {
-			return this.autoCompletePropertyNames(textOfEntireLine)
+			return this.autoCompletePropertyNames(textOfEntireLine);
 		}
 	}
 
 	public resolveCompletionItem(item: CompletionItem): CompletionItem {
 		// return the item itself because it already contains all the info
 		// necessary to display the details
-		return item
+		return item;
 	}
 
 	// =========================================================================
 	// AUTO COMPLETE
 	// =========================================================================
-	private autoCompletePropertyValues(
-		textOfLineUpToCursor: string,
-	): CompletionItem[] {
-		const propertyName = this.extractPropertyName(textOfLineUpToCursor)
-		const propertyValues = this.filterPropertyValues(propertyName)
-		return this.convertPropertyValuesToCompletionItems(propertyValues)
+	private autoCompletePropertyValues(textOfLineUpToCursor: string): CompletionItem[] {
+		const propertyName = this.extractPropertyName(textOfLineUpToCursor);
+		const propertyValues = this.filterPropertyValues(propertyName);
+		return this.convertPropertyValuesToCompletionItems(propertyValues);
 	}
 
-	private autoCompletePropertyNames(
-		textOfEntireLine: string,
-	): CompletionItem[] {
-		return this.convertPropertyNamesToCompletionItems(
-			this.properties,
-			textOfEntireLine,
-		)
+	private autoCompletePropertyNames(textOfEntireLine: string): CompletionItem[] {
+		return this.convertPropertyNamesToCompletionItems(this.properties, textOfEntireLine);
 	}
 
 	// =========================================================================
 	// CHECKS
 	// =========================================================================
 	private hasPropertyKey(lineText: string): boolean {
-		return this.hasEqualsSign(lineText)
+		return this.hasEqualsSign(lineText);
 	}
 
 	private hasEqualsSign(lineText: string): boolean {
-		return lineText.indexOf('=') >= 0
+		return lineText.indexOf("=") >= 0;
 	}
 
 	// =========================================================================
 	// PARSER
 	// =========================================================================
 	private extractPropertyName(lineText: string): string {
-		const lineTextParts = lineText.split('=')
+		const lineTextParts = lineText.split("=");
 		if (lineTextParts.length === 0) {
-			return ''
+			return "";
 		}
-		const propertyName = lineTextParts[0].trim().toLowerCase()
-		return propertyName
+		const propertyName = lineTextParts[0].trim().toLowerCase();
+		return propertyName;
 	}
 
 	// =========================================================================
@@ -164,17 +149,15 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 	// =========================================================================
 	private filterPropertyValues(propertyName: string): string[] {
 		// filter
-		const matchingProperty = this.properties.find(
-			property => property.name === propertyName,
-		)
+		const matchingProperty = this.properties.find((property) => property.name === propertyName);
 
 		// if not found anything, there are no values to display
 		if (matchingProperty === undefined) {
-			return []
+			return [];
 		}
 
 		// return values of the property
-		return matchingProperty.values
+		return matchingProperty.values;
 	}
 
 	// =========================================================================
@@ -185,48 +168,43 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 		textOfEntireLine: string,
 	): CompletionItem[] {
 		const triggerSuggestCommand: Command = {
-			command: 'editorconfig._triggerSuggestAfterDelay',
+			command: "editorconfig._triggerSuggestAfterDelay",
 			arguments: [],
-			title: '',
-		}
+			title: "",
+		};
 
-		return properties.map(property => {
+		return properties.map((property) => {
 			// basic info
-			const completionItem = new CompletionItem(
-				property.name,
-				CompletionItemKind.Property,
-			)
-			completionItem.documentation = property.description
+			const completionItem = new CompletionItem(property.name, CompletionItemKind.Property);
+			completionItem.documentation = property.description;
 
 			// append equals sign if line does not have one
 			// also automatically displays IntelliSense for property values
 			if (!this.hasEqualsSign(textOfEntireLine)) {
-				completionItem.insertText = property.name + ' = '
-				completionItem.command = triggerSuggestCommand
+				completionItem.insertText = property.name + " = ";
+				completionItem.command = triggerSuggestCommand;
 			}
 
-			return completionItem
-		})
+			return completionItem;
+		});
 	}
 
-	private convertPropertyValuesToCompletionItems(
-		values: string[],
-	): CompletionItem[] {
+	private convertPropertyValuesToCompletionItems(values: string[]): CompletionItem[] {
 		const valuesSortOrder = {
-			true: '1',
-			false: '2',
-			unset: '9',
-		}
-		return values.map(value => {
+			true: "1",
+			false: "2",
+			unset: "9",
+		};
+		return values.map((value) => {
 			// basic info
-			const completionItem = new CompletionItem(value, CompletionItemKind.Value)
+			const completionItem = new CompletionItem(value, CompletionItemKind.Value);
 
 			// sort predefined values to specific order
 			completionItem.sortText =
-				valuesSortOrder[value as keyof typeof valuesSortOrder] || '3' + value
-			return completionItem
-		})
+				valuesSortOrder[value as keyof typeof valuesSortOrder] || "3" + value;
+			return completionItem;
+		});
 	}
 }
 
-export default EditorConfigCompletionProvider
+export default EditorConfigCompletionProvider;

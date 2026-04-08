@@ -4,8 +4,7 @@
 
 [actions-img]: https://github.com/editorconfig/editorconfig-vscode/actions/workflows/test.yml/badge.svg
 [actions]: https://github.com/editorconfig/editorconfig-vscode/actions
-[chat-img]:
-  https://img.shields.io/badge/Gitter-Join_the_EditorConfig_VSCode_chat-brightgreen.png?style=flat-square
+[chat-img]: https://img.shields.io/badge/Gitter-Join_the_EditorConfig_VSCode_chat-brightgreen.png?style=flat-square
 [chat]: https://gitter.im/editorconfig/editorconfig-vscode
 
 This plugin [attempts](#known-issues) to override user/workspace settings with

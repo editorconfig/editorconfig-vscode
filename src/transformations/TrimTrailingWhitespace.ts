@@ -1,4 +1,4 @@
-import { KnownProps } from 'editorconfig'
+import { KnownProps } from "editorconfig";
 import {
 	commands,
 	Position,
@@ -9,9 +9,9 @@ import {
 	TextLine,
 	window,
 	workspace,
-} from 'vscode'
+} from "vscode";
 
-import { PreSaveTransformation } from './PreSaveTransformation'
+import { PreSaveTransformation } from "./PreSaveTransformation";
 
 export class TrimTrailingWhitespace extends PreSaveTransformation {
 	public transform(
@@ -20,74 +20,71 @@ export class TrimTrailingWhitespace extends PreSaveTransformation {
 		reason: TextDocumentSaveReason,
 	) {
 		const editorTrimsWhitespace = workspace
-			.getConfiguration('files', doc.uri)
-			.get('trimTrailingWhitespace', false)
+			.getConfiguration("files", doc.uri)
+			.get("trimTrailingWhitespace", false);
 
 		if (editorTrimsWhitespace) {
 			if (editorconfigProperties.trim_trailing_whitespace === false) {
 				const message = [
-					'The trimTrailingWhitespace workspace or user setting',
-					'is overriding the EditorConfig setting for this file.',
-				].join(' ')
+					"The trimTrailingWhitespace workspace or user setting",
+					"is overriding the EditorConfig setting for this file.",
+				].join(" ");
 				return {
 					edits: new Error(message),
 					message,
-				}
+				};
 			}
 		}
 
 		if (shouldIgnoreSetting(editorconfigProperties.trim_trailing_whitespace)) {
-			return { edits: [] }
+			return { edits: [] };
 		}
 
 		if (window.activeTextEditor?.document === doc) {
-			const trimReason =
-				reason !== TextDocumentSaveReason.Manual ? 'auto-save' : null
-			commands.executeCommand('editor.action.trimTrailingWhitespace', {
+			const trimReason = reason !== TextDocumentSaveReason.Manual ? "auto-save" : null;
+			commands.executeCommand("editor.action.trimTrailingWhitespace", {
 				reason: trimReason,
-			})
+			});
 			return {
 				edits: [],
-				message: 'editor.action.trimTrailingWhitespace',
-			}
+				message: "editor.action.trimTrailingWhitespace",
+			};
 		}
 
-		const edits: TextEdit[] = []
+		const edits: TextEdit[] = [];
 		for (let i = 0; i < doc.lineCount; i++) {
-			const edit = this.trimLineTrailingWhitespace(doc.lineAt(i))
+			const edit = this.trimLineTrailingWhitespace(doc.lineAt(i));
 
 			if (edit) {
-				edits.push(edit)
+				edits.push(edit);
 			}
 		}
 
 		return {
 			edits,
-			message: 'trimTrailingWhitespace()',
-		}
+			message: "trimTrailingWhitespace()",
+		};
 
-		function shouldIgnoreSetting(
-			value: typeof editorconfigProperties.trim_trailing_whitespace,
-		) {
-			return !value || value === 'unset'
+		function shouldIgnoreSetting(value: typeof editorconfigProperties.trim_trailing_whitespace) {
+			return !value || value === "unset";
 		}
 	}
 
 	private trimLineTrailingWhitespace(line: TextLine): TextEdit | void {
-		const trimmedLine = this.trimTrailingWhitespace(line.text)
+		const trimmedLine = this.trimTrailingWhitespace(line.text);
 
 		if (trimmedLine === line.text) {
-			return
+			return;
 		}
 
-		const whitespaceBegin = new Position(line.lineNumber, trimmedLine.length)
-		const whitespaceEnd = new Position(line.lineNumber, line.text.length)
-		const whitespace = new Range(whitespaceBegin, whitespaceEnd)
+		const whitespaceBegin = new Position(line.lineNumber, trimmedLine.length);
+		const whitespaceEnd = new Position(line.lineNumber, line.text.length);
+		const whitespace = new Range(whitespaceBegin, whitespaceEnd);
 
-		return TextEdit.delete(whitespace)
+		return TextEdit.delete(whitespace);
 	}
 
 	private trimTrailingWhitespace(input: string) {
-		return input.replace(/[\s\uFEFF\xA0]+$/g, '')
+		return input.replace(/[\s\uFEFF\xA0]+$/g, "");
 	}
 }
