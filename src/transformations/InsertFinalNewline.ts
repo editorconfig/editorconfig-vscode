@@ -1,12 +1,5 @@
+import { commands, Position, TextDocument, TextEdit, window } from 'vscode'
 import { KnownProps } from 'editorconfig'
-import {
-	commands,
-	Position,
-	TextDocument,
-	TextEdit,
-	window,
-} from 'vscode'
-
 import { PreSaveTransformation } from './PreSaveTransformation'
 
 const lineEndings = {

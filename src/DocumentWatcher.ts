@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from 'node:path'
 import {
 	Disposable,
 	TextDocument,
@@ -9,7 +9,6 @@ import {
 	workspace,
 } from 'vscode'
 import { KnownProps } from 'editorconfig'
-
 import {
 	InsertFinalNewline,
 	PreSaveTransformation,
@@ -55,9 +54,6 @@ export default class DocumentWatcher {
 			window.onDidChangeActiveTextEditor(async editor => {
 				this.handleTextEditorChange(editor)
 			}),
-		)
-
-		subscriptions.push(
 			window.onDidChangeWindowState(async state => {
 				if (state.focused && this.doc) {
 					const newOptions = await resolveTextEditorOptions(this.doc, {
@@ -69,9 +65,6 @@ export default class DocumentWatcher {
 					})
 				}
 			}),
-		)
-
-		subscriptions.push(
 			workspace.onDidSaveTextDocument(doc => {
 				if (path.basename(doc.fileName) === '.editorconfig') {
 					this.log('.editorconfig file saved.')
@@ -79,9 +72,6 @@ export default class DocumentWatcher {
 				// in case document was dirty on text editor change
 				this.handleDocumentEncoding(doc)
 			}),
-		)
-
-		subscriptions.push(
 			workspace.onWillSaveTextDocument(async e => {
 				const transformations = this.calculatePreSaveTransformations(
 					e.document,
@@ -199,7 +189,9 @@ export default class DocumentWatcher {
 			return
 		}
 
-		this.log(`${relativePath}: Re-opening document with ${targetEncoding} encoding...`)
+		this.log(
+			`${relativePath}: Re-opening document with ${targetEncoding} encoding...`,
+		)
 		await workspace.openTextDocument(document.uri, {
 			encoding: targetEncoding,
 		})

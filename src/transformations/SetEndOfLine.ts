@@ -1,6 +1,5 @@
-import { KnownProps } from 'editorconfig'
 import { EndOfLine, TextDocument, TextEdit } from 'vscode'
-
+import { KnownProps } from 'editorconfig'
 import { PreSaveTransformation } from './PreSaveTransformation'
 
 const eolMap = {
@@ -30,6 +29,6 @@ export class SetEndOfLine extends PreSaveTransformation {
 			: {
 					edits: [TextEdit.setEndOfLine(eol)],
 					message: `setEndOfLine(${eolKey})`,
-			  }
+				}
 	}
 }

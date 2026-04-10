@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from 'node:path'
 
 import { runTests } from '@vscode/test-electron'
 
@@ -39,4 +39,5 @@ async function main() {
 	}
 }
 
+// eslint-disable-next-line unicorn/prefer-top-level-await
 main()

@@ -1,6 +1,6 @@
+import * as path from 'node:path'
 import { globSync } from 'glob'
 import * as Mocha from 'mocha'
-import * as path from 'path'
 
 export function run(): Promise<void> {
 	// Create the mocha test
@@ -24,8 +24,8 @@ export function run(): Promise<void> {
 					c()
 				}
 			})
-		} catch (err) {
-			e(err)
+		} catch (error) {
+			e(error)
 		}
 	})
 }

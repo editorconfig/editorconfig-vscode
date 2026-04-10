@@ -1,5 +1,5 @@
-import * as editorconfig from 'editorconfig'
 import { TextDocument, TextEditorOptions, Uri, window, workspace } from 'vscode'
+import * as editorconfig from 'editorconfig'
 
 /**
  * Resolves `TextEditorOptions` for a `TextDocument`, combining the editor's
@@ -140,6 +140,13 @@ export function resolveFile(doc: TextDocument): {
 }
 
 /**
+ * Convert vscode tabSize option into numeric value
+ */
+function resolveTabSize(tabSize: number | string) {
+	return tabSize === 'auto' ? 4 : Number.parseInt(String(tabSize), 10)
+}
+
+/**
  * Convert .editorconfig values to vscode editor options
  */
 export function fromEditorConfig(
@@ -192,27 +199,22 @@ export function toEditorConfig(options: TextEditorOptions) {
 	const result: editorconfig.KnownProps = {}
 
 	switch (options.insertSpaces) {
-		case true:
+		case true: {
 			result.indent_style = 'space'
 			if (options.tabSize) {
 				result.indent_size = resolveTabSize(options.tabSize)
 			}
 			break
+		}
 		case false:
-		case 'auto':
+		case 'auto': {
 			result.indent_style = 'tab'
 			if (options.tabSize) {
 				result.tab_width = resolveTabSize(options.tabSize)
 			}
 			break
+		}
 	}
 
 	return result
-
-	/**
-	 * Convert vscode tabSize option into numeric value
-	 */
-	function resolveTabSize(tabSize: number | string) {
-		return tabSize === 'auto' ? 4 : parseInt(String(tabSize), 10)
-	}
 }
