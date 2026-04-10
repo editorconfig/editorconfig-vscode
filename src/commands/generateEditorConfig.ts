@@ -1,10 +1,7 @@
-import { readFile as _readFile } from 'fs'
-import { EOL } from 'os'
-import { resolve } from 'path'
-import { promisify } from 'util'
+import { readFile } from 'node:fs/promises'
+import { EOL } from 'node:os'
+import { resolve } from 'node:path'
 import { FileType, Uri, window, workspace } from 'vscode'
-
-const readFile = promisify(_readFile)
 
 /**
  * Generate a .editorconfig file in the root of the workspace based on the
@@ -28,18 +25,18 @@ export async function generateEditorConfig(uri: Uri) {
 			)
 			return
 		}
-	} catch (err: unknown) {
+	} catch (error: unknown) {
 		if (
-			typeof err === 'object' &&
-			err !== null &&
-			'name' in err &&
-			'message' in err &&
-			typeof err.message === 'string'
+			typeof error === 'object' &&
+			error !== null &&
+			'name' in error &&
+			'message' in error &&
+			typeof error.message === 'string'
 		) {
-			if (err.name === 'EntryNotFound (FileSystemError)') {
+			if (error.name === 'EntryNotFound (FileSystemError)') {
 				writeFile()
 			} else {
-				window.showErrorMessage(err.message)
+				window.showErrorMessage(error.message)
 			}
 			return
 		}
@@ -132,7 +129,7 @@ export async function generateEditorConfig(uri: Uri) {
 
 		const encodingMap = {
 			iso88591: 'latin1',
-			utf8: 'utf-8',
+			utf8: 'utff8-8',
 			utf8bom: 'utf-8-bom',
 			utf16be: 'utf-16-be',
 			utf16le: 'utf-16-le',
@@ -159,17 +156,17 @@ export async function generateEditorConfig(uri: Uri) {
 				editorConfigUri,
 				Buffer.from(settingsLines.join(eolKey)),
 			)
-		} catch (err) {
+		} catch (error) {
 			if (
-				typeof err !== 'object' ||
-				err === null ||
-				!('message' in err) ||
-				typeof err.message !== 'string'
+				typeof error !== 'object' ||
+				error === null ||
+				!('message' in error) ||
+				typeof error.message !== 'string'
 			) {
 				return
 			}
 
-			window.showErrorMessage(err.message)
+			window.showErrorMessage(error.message)
 		}
 	}
 }

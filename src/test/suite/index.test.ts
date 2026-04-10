@@ -1,9 +1,8 @@
-import * as assert from 'assert'
-import * as os from 'os'
+import * as assert from 'node:assert'
+import * as os from 'node:os'
 import { Position, window, workspace, WorkspaceEdit } from 'vscode'
-import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
-
 import * as utils from 'vscode-test-utils'
+import { getFixturePath, getOptionsForFixture, wait } from '../testUtils'
 
 suite('EditorConfig extension', function () {
 	this.retries(2)
@@ -372,26 +371,27 @@ function withSetting(
 ) {
 	return {
 		async getText() {
-			return (
-				await this.createDoc(options.contents, options.fileName)
-			).getText()
+			const doc = await this.createDoc(options.contents, options.fileName)
+			return doc.getText()
 		},
-		saveText(text: string) {
-			return new Promise<string>(async resolve => {
-				const doc = await this.createDoc(options.contents, options.fileName)
+		async saveText(text: string) {
+			const doc = await this.createDoc(options.contents, options.fileName)
+
+			const savePromise = new Promise<string>(resolve => {
 				workspace.onDidChangeTextDocument(doc.save)
 				workspace.onDidSaveTextDocument(savedDoc => {
 					assert.strictEqual(savedDoc.isDirty, false, 'dirty saved doc')
 					resolve(savedDoc.getText())
 				})
-				const edit = new WorkspaceEdit()
-				edit.insert(doc.uri, new Position(0, 0), text)
-				assert.strictEqual(
-					await workspace.applyEdit(edit),
-					true,
-					'editor fails to apply edit',
-				)
 			})
+
+			const edit = new WorkspaceEdit()
+			edit.insert(doc.uri, new Position(0, 0), text)
+
+			const result = await workspace.applyEdit(edit)
+			assert.strictEqual(result, true, 'editor fails to apply edit')
+
+			return savePromise
 		},
 		async createDoc(contents = '', name = 'test') {
 			const uri = await utils.createFile(

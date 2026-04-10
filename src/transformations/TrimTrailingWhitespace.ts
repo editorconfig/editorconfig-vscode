@@ -1,4 +1,3 @@
-import { KnownProps } from 'editorconfig'
 import {
 	commands,
 	Position,
@@ -10,7 +9,7 @@ import {
 	window,
 	workspace,
 } from 'vscode'
-
+import { KnownProps } from 'editorconfig'
 import { PreSaveTransformation } from './PreSaveTransformation'
 
 export class TrimTrailingWhitespace extends PreSaveTransformation {
@@ -24,6 +23,7 @@ export class TrimTrailingWhitespace extends PreSaveTransformation {
 			.get('trimTrailingWhitespace', false)
 
 		if (editorTrimsWhitespace) {
+			// eslint-disable-next-line unicorn/no-lonely-if
 			if (editorconfigProperties.trim_trailing_whitespace === false) {
 				const message = [
 					'The trimTrailingWhitespace workspace or user setting',
@@ -42,7 +42,7 @@ export class TrimTrailingWhitespace extends PreSaveTransformation {
 
 		if (window.activeTextEditor?.document === doc) {
 			const trimReason =
-				reason !== TextDocumentSaveReason.Manual ? 'auto-save' : null
+				reason === TextDocumentSaveReason.Manual ? null : 'auto-save'
 			commands.executeCommand('editor.action.trimTrailingWhitespace', {
 				reason: trimReason,
 			})
@@ -88,6 +88,7 @@ export class TrimTrailingWhitespace extends PreSaveTransformation {
 	}
 
 	private trimTrailingWhitespace(input: string) {
+		// eslint-disable-next-line unicorn/no-hex-escape
 		return input.replace(/[\s\uFEFF\xA0]+$/g, '')
 	}
 }

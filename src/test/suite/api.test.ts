@@ -1,7 +1,6 @@
-import * as assert from 'assert'
-import { KnownProps } from 'editorconfig'
+import * as assert from 'node:assert'
 import { TextEditorOptions } from 'vscode'
-
+import { KnownProps } from 'editorconfig'
 import * as api from '../../api'
 
 suite('EditorConfig extension', () => {

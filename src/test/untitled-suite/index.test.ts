@@ -1,8 +1,7 @@
-import * as assert from 'assert'
+import * as assert from 'node:assert'
 import { commands, window } from 'vscode'
-import { wait } from '../testUtils'
-
 import * as utils from 'vscode-test-utils'
+import { wait } from '../testUtils'
 
 suite('EditorConfig extension untitled workspace', function () {
 	this.retries(2)

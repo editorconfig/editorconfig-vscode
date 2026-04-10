@@ -97,9 +97,9 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 		const textOfEntireLine = document.getText(
 			document.lineAt(position.line).range,
 		)
-		const textOfLineUpToCursor = textOfEntireLine.substring(
+		const textOfLineUpToCursor = textOfEntireLine.slice(
 			0,
-			position.character,
+			Math.max(0, position.character),
 		)
 
 		// conditionally generate autocomplete for property names or values
@@ -144,7 +144,7 @@ class EditorConfigCompletionProvider implements CompletionItemProvider {
 	}
 
 	private hasEqualsSign(lineText: string): boolean {
-		return lineText.indexOf('=') >= 0
+		return lineText.includes('=')
 	}
 
 	// =========================================================================
