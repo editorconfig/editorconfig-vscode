@@ -65,3 +65,7 @@ menu by right-clicking in the folder where you'd like it to be and selecting
 
 [visual studio code]: https://code.visualstudio.com/
 [editorconfig]: https://editorconfig.org/
+
+### Issue #474
+- **Status:** Fix proposed in PR
+- **Description:** No warning when saving file with unsupported charset
