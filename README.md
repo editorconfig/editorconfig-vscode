@@ -65,3 +65,9 @@ menu by right-clicking in the folder where you'd like it to be and selecting
 
 [visual studio code]: https://code.visualstudio.com/
 [editorconfig]: https://editorconfig.org/
+
+## Known Issues
+
+### #184 — Input file must be a full path name
+**Status:** Fix in progress. See [PR #XXX](https://github.com/editorconfig/editorconfig/issues/184).
+**Workaround:** Use absolute paths when referencing EditorConfig files.
